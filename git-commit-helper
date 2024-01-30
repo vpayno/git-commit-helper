@@ -1,0 +1,93 @@
+#!/usr/bin/env bash
+
+set -e
+
+main() {
+	local -a commit_types
+	local commit_type
+	local commit_scope
+	local commit_subject
+	local commit_body
+
+	gum format --type="markdown" <<-EOF
+		# Please choose the commit type:
+	EOF
+	commit_types=("fix" "feat" "docs" "style" "refactor" "test" "chore")
+	commit_type="$(gum choose "${commit_types[@]}")"
+	printf "\n"
+
+	gum format --type="markdown" <<-EOF
+		# Please enter the commit scope (optional):
+	EOF
+	commit_scope="$(gum input --placeholder "scope")"
+	if [[ -n ${commit_scope} ]]; then
+		commit_scope="(${commit_scope})"
+	fi
+	printf "\n"
+
+	gum format --type="markdown" <<-EOF
+		# Please enter the commit message's subject line:
+	EOF
+	commit_subject="$(gum input --placeholder "summary of this change")"
+	tmpfile_subject="$(mktemp)"
+	echo "${commit_subject}" >"${tmpfile_subject}"
+	gum format --type="markdown" <<-EOF
+		# Checking spelling of commit message subject
+	EOF
+	aspell --master=en_US --lang=en_US --check "${tmpfile_subject}"
+	commit_subject="$(cat "${tmpfile_subject}")"
+	rm -f "${tmpfile_subject}"
+	printf "\n"
+
+	gum format --type="markdown" <<-EOF
+		# Please enter the commit message's body (multiline):
+	EOF
+	commit_body="$(gum write --placeholder "details of this change")"
+	tmpfile_body="$(mktemp)"
+	echo "${commit_body}" >"${tmpfile_body}"
+	gum format --type="markdown" <<-EOF
+		# Checking spelling of commit message body
+	EOF
+	aspell --master=en_US --lang=en_US --check "${tmpfile_body}"
+	commit_body="$(cat "${tmpfile_body}")"
+	rm -f "${tmpfile_body}"
+	printf "\n"
+
+	printf "commit_type: %s\n" "${commit_type}"
+	printf "commit_scope: %s\n" "${commit_scope}"
+	printf "commit_subject: %s\n" "${commit_subject}"
+	printf "commit_body: %s\n" "${commit_body}"
+	printf "\n"
+
+	gum format --type="markdown" <<-EOF
+		# Staged changes:
+		$(git status)
+	EOF
+	gum format --type="markdown" <<-EOF
+		# Staged command:
+		\`git commit -m "${commit_type}${commit_scope}: ${commit_subject}"\" -m \""${commit_body}"\`
+	EOF
+	if gum confirm "Commit changes?"; then
+		git commit -m "${commit_type}${commit_scope}: ${commit_subject}" -m "${commit_body}"
+	fi
+
+	gum format --type="markdown" <<-EOF
+		# Running gitlint on unpushed commits or task branch...
+	EOF
+	if gitlint lint; then
+		gum format --type="markdown" <<-EOF
+			## done.
+		EOF
+	else
+		gum format --type="markdown" <<-EOF
+			## failed.
+		EOF
+	fi
+
+	gum format --type="markdown" <<-EOF
+		# Showing git commit summary
+	EOF
+	git show --summary
+} # main ()
+
+main "${@}"
