@@ -1,0 +1,134 @@
+#!/usr/bin/env bash
+
+set -e
+
+config() {
+	local -a args=("${@}")
+
+	git config --local "${args[@]}"
+} # config()
+
+println() {
+	gum format --type="markdown" <<-EOF
+		${@}
+	EOF
+	printf "\n"
+} # println()
+
+main() {
+	local default_branch
+	local current_branch
+	local current_origin
+
+	local message
+
+	local -a commits
+	local commit
+	local hash
+
+	local commit_selector
+	local rebase_target
+
+	# true if no staged changes, false if changes are staged
+	set +e
+	if ! git diff --cached --quiet; then
+		println "# Found the following staged changes:"
+		git status
+		printf "\n"
+	else
+		message="$(
+			cat <<-EOF
+				# ERROR: Can't find staged changes
+
+				You can stage changes with one or more of these commands:
+				\`\`\`text
+				git add --patch
+				git add -u .
+				git add file(s)
+				\`\`\`
+			EOF
+		)"
+		println "${message}"
+		exit 1
+	fi
+	set -e
+
+	if config misc.default-branch >&/dev/null; then
+		default_branch="$(config --get misc.default-branch)"
+	else
+		message="$(
+			cat <<-EOF
+				# ERROR: Default Branch Not Found
+				Set the default branch with the command
+				\`\`\`text
+				git config --local misc.default-branch main
+				\`\`\`
+
+				use \`main\`, \`master\`, \`develop\`, etc - it needs to be a real branch and the project's default branch
+			EOF
+		)"
+		println "${message}"
+		exit 1
+	fi
+
+	if ! git branch --format '%(refname:lstrip=2)' --list main | grep -q "^${default_branch}$"; then
+		println "# ERROR: branch [${default_branch}] doesn't exist"
+		exit 1
+	else
+		println "# Default branch, ${default_branch}, exists, continuing."
+	fi
+
+	current_origin="$(git rev-parse --abbrev-ref --symbolic-full-name "@{u}" | cut -f1 -d'/')"
+	current_branch="$(git branch --show-current)"
+
+	if [[ ${current_branch} == "${default_branch}" ]]; then
+		commit_selector="${current_origin}/${current_branch}..HEAD"
+		rebase_target=""
+	else
+		commit_selector="${default_branch}.."
+		rebase_target="${default_branch}"
+	fi
+
+	mapfile -t commits < <(git log --pretty=format:'%h -%d %s (%cr) <%an>' --abbrev-commit --decorate "${commit_selector}")
+
+	if [[ ${#commits[@]} -eq 0 ]]; then
+		println "# Didn't find any commits that can be fixed up."
+		exit
+	fi
+
+	while :; do
+		println "# Please choose the commit you would like to fixup:"
+		commit="$(gum choose "${commits[@]}")"
+		printf "\n"
+
+		hash="${commit%% *}"
+
+		println "# Is this the commit message you want to fixup?"
+		git show --summary --name-only "${hash}"
+		printf "\n"
+
+		if gum confirm "Is this the correct commit?"; then
+			break
+		fi
+	done
+
+	git commit --fixup "${hash}"
+	printf "\n"
+
+	git log --pretty=format:'%h -%d %s (%cr) <%an>' --abbrev-commit --decorate "${commit_selector}"
+	printf "\n"
+
+	message="$(
+		cat <<-EOF
+			# Don't forget to run the following commands before merging or pushing to default branch:
+
+			\`\`\`text
+			git rebase --interactive --autosquash ${rebase_target}
+			git push --force ${current_origin} ${current_branch}
+			\`\`\`
+		EOF
+	)"
+	println "${message}"
+} # main ()
+
+main "${@}"
