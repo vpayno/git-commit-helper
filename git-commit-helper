@@ -2,6 +2,13 @@
 
 set -e
 
+println() {
+	gum format --type="markdown" <<-EOF
+		${@}
+	EOF
+	printf "\n"
+} # println()
+
 main() {
 	local -a commit_types
 	local commit_type
@@ -9,45 +16,57 @@ main() {
 	local commit_subject
 	local commit_body
 
-	gum format --type="markdown" <<-EOF
-		# Please choose the commit type:
-	EOF
+	# true if no staged changes, false if changes are staged
+	set +e
+	if ! git diff --cached --quiet; then
+		println "# Found the following staged changes:"
+		git status
+		printf "\n"
+	else
+		message="$(
+			cat <<-EOF
+				# ERROR: Can't find staged changes
+
+				You can stage changes with one or more of these commands:
+				\`\`\`text
+				git add --patch
+				git add -u .
+				git add file(s)
+				\`\`\`
+			EOF
+		)"
+		println "${message}"
+		exit 1
+	fi
+	set -e
+
+	println "# Please choose the commit type:"
 	commit_types=("fix" "feat" "docs" "style" "refactor" "test" "chore")
 	commit_type="$(gum choose "${commit_types[@]}")"
 	printf "\n"
 
-	gum format --type="markdown" <<-EOF
-		# Please enter the commit scope (optional):
-	EOF
+	println "# Please enter the commit scope (optional):"
 	commit_scope="$(gum input --placeholder "scope")"
 	if [[ -n ${commit_scope} ]]; then
 		commit_scope="(${commit_scope})"
 	fi
 	printf "\n"
 
-	gum format --type="markdown" <<-EOF
-		# Please enter the commit message's subject line:
-	EOF
+	println "# Please enter the commit message's subject line:"
 	commit_subject="$(gum input --placeholder "summary of this change")"
 	tmpfile_subject="$(mktemp)"
 	echo "${commit_subject}" >"${tmpfile_subject}"
-	gum format --type="markdown" <<-EOF
-		# Checking spelling of commit message subject
-	EOF
+	println "# Checking spelling of commit message subject"
 	aspell --master=en_US --lang=en_US --check "${tmpfile_subject}"
 	commit_subject="$(cat "${tmpfile_subject}")"
 	rm -f "${tmpfile_subject}"
 	printf "\n"
 
-	gum format --type="markdown" <<-EOF
-		# Please enter the commit message's body (multiline):
-	EOF
+	println "# Please enter the commit message's body (multiline):"
 	commit_body="$(gum write --placeholder "details of this change")"
 	tmpfile_body="$(mktemp)"
 	echo "${commit_body}" >"${tmpfile_body}"
-	gum format --type="markdown" <<-EOF
-		# Checking spelling of commit message body
-	EOF
+	println "# Checking spelling of commit message body"
 	aspell --master=en_US --lang=en_US --check "${tmpfile_body}"
 	commit_body="$(cat "${tmpfile_body}")"
 	rm -f "${tmpfile_body}"
@@ -71,22 +90,14 @@ main() {
 		git commit -m "${commit_type}${commit_scope}: ${commit_subject}" -m "${commit_body}"
 	fi
 
-	gum format --type="markdown" <<-EOF
-		# Running gitlint on unpushed commits or task branch...
-	EOF
+	println "# Running gitlint on unpushed commits or task branch..."
 	if gitlint lint; then
-		gum format --type="markdown" <<-EOF
-			## done.
-		EOF
+		println "## done."
 	else
-		gum format --type="markdown" <<-EOF
-			## failed.
-		EOF
+		println "## failed."
 	fi
 
-	gum format --type="markdown" <<-EOF
-		# Showing git commit summary
-	EOF
+	println "# Showing git commit summary"
 	git show --summary
 } # main ()
 
