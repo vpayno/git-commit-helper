@@ -16,3 +16,13 @@ Just finished the book [Effortless](https://gregmckeown.com/books/effortless/) a
 
     - Use theese as practice for learing Go+Cue+BubbleTea.
     - Slow is smooth, smooth is fast.
+
+## Helpers
+
+### git-commit-helper
+
+Not a dumb tool, it helps
+
+- remind you of the proper format for commit subjects,
+- helps spell check your subject and body and
+- uses gitlint to validate unpushed commit(s) or the task branch.
