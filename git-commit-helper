@@ -97,6 +97,7 @@ main() {
 		println "## done."
 	else
 		println "## failed."
+		println "### Please use \`git commit -v --amend\` to fix the lint errors in the latest commit message."
 	fi
 
 	if ${commit_created}; then
