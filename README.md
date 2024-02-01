@@ -26,3 +26,14 @@ Not a dumb tool, it helps
 - remind you of the proper format for commit subjects,
 - helps spell check your subject and body and
 - uses gitlint to validate unpushed commit(s) or the task branch.
+
+### git-fixup-helper
+
+This one makes using fixup commits easier.
+
+As I add scripts, they are succesfully better than the last.
+
+- Checks to see if the user has staged changes.
+- Has different behavior if on the default branch or a task branch.
+- Has a roundabout way of browsing commit fixup candidates.
+- Guides user on next steps.
