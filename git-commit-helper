@@ -53,6 +53,10 @@ main() {
 	fi
 	printf "\n"
 
+	if gum confirm "Review staged changes?"; then
+		git diff --cached --color=always | less --RAW-CONTROL-CHARS
+	fi
+
 	println "# Please enter the commit message's subject line:"
 	commit_subject="$(gum input --placeholder "summary of this change")"
 	tmpfile_subject="$(mktemp)"
@@ -62,6 +66,10 @@ main() {
 	commit_subject="$(cat "${tmpfile_subject}")"
 	rm -f "${tmpfile_subject}"
 	printf "\n"
+
+	if gum confirm "Review staged changes?"; then
+		git diff --cached --color=always | less --RAW-CONTROL-CHARS
+	fi
 
 	println "# Please enter the commit message's body (multiline):"
 	commit_body="$(gum write --placeholder "details of this change")"
