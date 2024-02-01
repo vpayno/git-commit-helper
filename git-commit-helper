@@ -15,6 +15,7 @@ main() {
 	local commit_scope
 	local commit_subject
 	local commit_body
+	local commit_created=false
 
 	# true if no staged changes, false if changes are staged
 	set +e
@@ -88,6 +89,7 @@ main() {
 	EOF
 	if gum confirm "Commit changes?"; then
 		git commit -m "${commit_type}${commit_scope}: ${commit_subject}" -m "${commit_body}"
+		commit_created=true
 	fi
 
 	println "# Running gitlint on unpushed commits or task branch..."
@@ -97,8 +99,10 @@ main() {
 		println "## failed."
 	fi
 
-	println "# Showing git commit summary"
-	git show --summary
+	if ${commit_created}; then
+		println "# Showing git commit summary"
+		git show --summary
+	fi
 } # main ()
 
 main "${@}"
