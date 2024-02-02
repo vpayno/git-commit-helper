@@ -21,11 +21,11 @@ Just finished the book [Effortless](https://gregmckeown.com/books/effortless/) a
 
 ### git-commit-helper
 
-Not a dumb tool, it helps
+Not a dumb tool, it helps:
 
 - remind you of the proper format for commit subjects,
-- helps spell check your subject and body and
-- uses gitlint to validate unpushed commit(s) or the task branch.
+- spell check your subject and body and
+- lint unpushed commit(s) or the task branch.
 
 ### git-fixup-helper
 
