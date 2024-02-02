@@ -37,3 +37,15 @@ As I add scripts, they are succesfully better than the last.
 - Has different behavior if on the default branch or a task branch.
 - Has a roundabout way of browsing commit fixup candidates.
 - Guides user on next steps.
+
+### git-new-branch-helper
+
+This script creates a new worktree and branch and then shows you how to clean up after you're done with your change review.
+
+Note: Using `cr` for `change-review` instead of `pr` for `pull-request` or `mr` for `merge-request`.
+
+- worktree path layout "repo root path"-cr-"branch name"
+- only allows alpha-numeric characters, dash and underscore in branch names
+    - spaces, /, etc can create a lot of headaches
+- show users how to start using their new branch and worktree
+- show users how to remove their new worktree and branch (that will get replaced by the next helper)
