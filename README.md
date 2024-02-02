@@ -14,7 +14,7 @@ Just finished the book [Effortless](https://gregmckeown.com/books/effortless/) a
 
 - v2 - improve them without burning out, over effort, or maximizing diminishing returns
 
-    - Use theese as practice for learing Go+Cue+BubbleTea.
+    - Use these as practice for learning Go+Cue+BubbleTea.
     - Slow is smooth, smooth is fast.
 
 ## Helpers
@@ -31,7 +31,7 @@ Not a dumb tool, it helps:
 
 This one makes using fixup commits easier.
 
-As I add scripts, they are succesfully better than the last.
+As I add scripts, they are successfully better than the last.
 
 - Checks to see if the user has staged changes.
 - Has different behavior if on the default branch or a task branch.

@@ -71,7 +71,7 @@ main() {
 		git diff --cached --color=always | less --RAW-CONTROL-CHARS
 	fi
 
-	println "# Please enter the commit message's body (multiline):"
+	println "# Please enter the commit message's body (multi-line):"
 	commit_body="$(gum write --placeholder "details of this change")"
 	tmpfile_body="$(mktemp)"
 	echo "${commit_body}" >"${tmpfile_body}"
