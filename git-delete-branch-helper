@@ -1,0 +1,131 @@
+#!/usr/bin/env bash
+
+set -e
+
+config() {
+	local -a args=("${@}")
+
+	git config --local "${args[@]}"
+} # config()
+
+println() {
+	gum format --type="markdown" <<-EOF
+		${@}
+	EOF
+	printf "\n"
+} # println()
+
+main() {
+	local message
+
+	local default_branch
+	local current_branch
+
+	local -a all_branches
+	# local csv_branches
+	local -a chosen_branches
+	local branch
+
+	local -a all_remotes
+	local csv_remotes
+	local -a chosen_remotes
+	local remote
+
+	current_branch="$(git branch --show-current)"
+
+	if config misc.default-branch >&/dev/null; then
+		default_branch="$(config --get misc.default-branch)"
+	else
+		message="$(
+			cat <<-EOF
+				# ERROR: Default Branch Not Found
+				Set the default branch with the command
+				\`\`\`text
+				git config --local misc.default-branch main
+				\`\`\`
+
+				use \`main\`, \`master\`, \`develop\`, etc - it needs to be a real branch and the project's default branch
+			EOF
+		)"
+		println "${message}"
+		exit 1
+	fi
+
+	if ! git branch --format '%(refname:lstrip=2)' --list main | grep -q "^${default_branch}$"; then
+		println "# ERROR: default branch [${default_branch}] doesn't exist"
+		exit 1
+	else
+		println "# Default branch, ${default_branch}, exists, continuing."
+	fi
+
+	if [[ ${current_branch} != "${default_branch}" ]]; then
+		println "## changing branch from %s to %s" "$(git branch --show-current)" "${default_branch}"
+		git switch "${default_branch}" || exit
+		printf "\n"
+	fi
+
+	mapfile -t all_remotes < <(git remote | sort -uV)
+
+	local save_ifs="${IFS}"
+	IFS=","
+	csv_remotes="${all_remotes[*]}"
+	IFS="${save_ifs}"
+
+	println "# Choose one or more remotes to delete branches from:"
+	mapfile -t chosen_remotes < <(gum choose --ordered --no-limit --selected="${csv_remotes}" "${all_remotes[@]}")
+	printf "\n"
+
+	while :; do
+		mapfile -t all_branches < <(git branch --format '%(refname:lstrip=2)' | sort -uV | grep -v -E "^${default_branch}$")
+
+		# local save_ifs="${IFS}"
+		# IFS=","
+		# csv_branches="${all_branches[*]}"
+		# IFS="${save_ifs}"
+
+		println "# Choose one or more branches to delete:"
+		mapfile -t chosen_branches < <(gum choose --ordered --no-limit "${all_branches[@]}")
+		printf "\n"
+
+		println "## Selected branches:"
+		printf "\t%s\n" "${chosen_branches[@]}"
+		printf "\n"
+
+		if gum confirm "Delete the selected branches?"; then
+			break
+		fi
+	done
+
+	local -i deleted_count=0
+	local -i error_count=0
+	for branch in "${chosen_branches[@]}"; do
+		if git branch --format '%(refname:lstrip=2)' --no-merged | grep -q -E "^${branch}$"; then
+			if ! gum confirm "Branch [${branch}] isn't merged, continue?"; then
+				println "## skipping deleting not merged branch [${branch}]"
+				continue
+			fi
+		fi
+
+		git branch --delete "${branch}" || ((error_count += 1))
+		printf "\n"
+
+		for remote in "${chosen_remotes[@]}"; do
+			if git branch --format '%(refname:lstrip=2)' --all | grep -q -E "^${remote}/${branch}$"; then
+				git push "${remote}" --delete "${branch}" || ((error_count += 1))
+				printf "\n"
+			fi
+		done
+
+		((deleted_count += 1))
+	done
+	printf "\n"
+
+	if [[ ${error_count} -gt 0 ]]; then
+		println "# Errors encountered: ${error_count}"
+	fi
+
+	println "# Deleted ${deleted_count} of ${#chosen_branches[@]} branches."
+	printf "\n"
+} # main ()
+
+main "${@}"

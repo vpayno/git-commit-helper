@@ -49,3 +49,18 @@ Note: Using `cr` for `change-review` instead of `pr` for `pull-request` or `mr` 
     - spaces, /, etc can create a lot of headaches
 - show users how to start using their new branch and worktree
 - show users how to remove their new worktree and branch (that will get replaced by the next helper)
+
+### git-delete-branch-helper
+
+This scripts automates the deletion of branches, and associated worktrees, from a local and remotes.
+
+Instead of over complicating the script, assume it will wipe the branch from existence (except for the reflog).
+
+If you need to perform a surgical deletion of the branch, do it by hand.
+
+- prompt for "enter name" or "search for branch"
+- confirm the branch name by showing the last 10 commits in the branch
+- check if a worktree is associated with the branch
+- delete both the worktree and branch from local
+- delete the branch from all remotes
+- declare victory over the evil Branchians, maybe use that terminal fireworks CLI
