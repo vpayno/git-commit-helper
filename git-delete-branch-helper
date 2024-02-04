@@ -148,6 +148,11 @@ main() {
 		println "# Errors encountered: ${error_count}"
 	fi
 
+	# randomly celebrate
+	if ((RANDOM % 5 == 3)); then
+		timeout 5 confetty
+	fi
+
 	println "# Deleted ${deleted_count} of ${#chosen_branches[@]} branches."
 	printf "\n"
 } # main ()
