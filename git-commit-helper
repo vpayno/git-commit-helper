@@ -58,7 +58,7 @@ main() {
 	fi
 
 	println "# Please enter the commit message's subject line:"
-	commit_subject="$(gum input --placeholder "summary of this change")"
+	commit_subject="$(gum input --width=50 --placeholder "summary of this change")"
 	tmpfile_subject="$(mktemp)"
 	echo "${commit_subject}" >"${tmpfile_subject}"
 	println "# Checking spelling of commit message subject"
@@ -72,7 +72,7 @@ main() {
 	fi
 
 	println "# Please enter the commit message's body (multi-line):"
-	commit_body="$(gum write --placeholder "details of this change")"
+	commit_body="$(gum write --width=72 --placeholder "details of this change")"
 	tmpfile_body="$(mktemp)"
 	echo "${commit_body}" >"${tmpfile_body}"
 	println "# Checking spelling of commit message body"
