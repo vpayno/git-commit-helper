@@ -32,7 +32,7 @@ main() {
 	local entry
 
 	local -a all_branches
-	# local csv_branches
+	local csv_branches
 	local -a chosen_branches
 	local branch
 
@@ -88,13 +88,8 @@ main() {
 	while :; do
 		mapfile -t all_branches < <(git branch --format '%(refname:lstrip=2)' | sort -uV | grep -v -E "^${default_branch}$")
 
-		# local save_ifs="${IFS}"
-		# IFS=","
-		# csv_branches="${all_branches[*]}"
-		# IFS="${save_ifs}"
-
 		println "# Choose one or more branches to delete:"
-		mapfile -t chosen_branches < <(gum choose --ordered --no-limit "${all_branches[@]}")
+		mapfile -t chosen_branches < <(gum choose --ordered --no-limit --selected="${csv_branches}" "${all_branches[@]}")
 		printf "\n"
 
 		println "## Selected branches:"
@@ -103,6 +98,11 @@ main() {
 
 		if gum confirm "Delete the selected branches?"; then
 			break
+		else
+			local save_ifs="${IFS}"
+			IFS=","
+			csv_branches="${chosen_branches[*]}"
+			IFS="${save_ifs}"
 		fi
 	done
 
