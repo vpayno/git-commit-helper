@@ -17,6 +17,22 @@ Just finished the book [Effortless](https://gregmckeown.com/books/effortless/) a
     - Use these as practice for learning Go+Cue+BubbleTea.
     - Slow is smooth, smooth is fast.
 
+## Dependencies
+
+Use the script `./install-deps.sh` to install the following dependencies:
+
+- [Gum](https://github.com/charmbracelet/gum)
+
+```text
+go install github.com/charmbracelet/gum@latest
+```
+
+- [Confetty](https://github.com/maaslalani/confetty)
+
+```text
+go install github.com/maaslalani/confetty@latest
+```
+
 ## Helpers
 
 ### git-commit-helper
