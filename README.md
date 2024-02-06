@@ -4,7 +4,7 @@ Starting out with a demo for a git-commit-helper using bash and Gum and seeing w
 
 ## Iterations
 
-Just finished the book [Effortless](https://gregmckeown.com/books/effortless/) and I'm trying it out for this project.
+Just finished [Effortless](https://gregmckeown.com/books/effortless/) and I'm trying it out for this project.
 
 - v1 - it's ugly but it's at least written down/created
 
