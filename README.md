@@ -80,3 +80,8 @@ If you need to perform a surgical deletion of the branch, do it by hand.
 - delete both the worktree and branch from local
 - delete the branch from all remotes
 - declare victory over the evil Branchians, maybe use that terminal fireworks CLI
+
+### git-clean-up-branches-helper
+
+Almost the same as `git-delete-branch-helper`.
+The difference is that the user starts with all the merged branches selected and all the not-merged branches are omitted from the selection screen.
