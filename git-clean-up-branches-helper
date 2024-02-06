@@ -21,6 +21,36 @@ key_exists() {
 	eval '[[ "${'"${3}"'[${1}]+exists}" ]]'
 }
 
+usage() {
+	println "# git-clean-up-branches-helper"
+	println "This scripts helps you delete all merged branches"
+	println "-h | --help     : this screen"
+	println "-H | --headless : automatically deletes all merged branches on all remotes"
+} # usage()
+
+declare -a args=("${@}")
+declare arg
+
+declare headless_mode=false
+
+for arg in "${args[@]}"; do
+	case "${arg}" in
+		"-h") ;&
+		"--help")
+			usage
+			exit
+			;;
+		"-H") ;&
+		"--headless")
+			headless_mode=true
+			;;
+		*)
+			usage
+			exit
+			;;
+	esac
+done
+
 main() {
 	local message
 
@@ -81,35 +111,44 @@ main() {
 	csv_remotes="${all_remotes[*]}"
 	IFS="${save_ifs}"
 
-	println "# Choose one or more remotes to delete branches from:"
-	mapfile -t chosen_remotes < <(gum choose --ordered --no-limit --selected="${csv_remotes}" "${all_remotes[@]}")
-	printf "\n"
+	if ${headless_mode}; then
+		chosen_remotes=("${all_remotes[@]}")
+	else
+		println "# Choose one or more remotes to delete branches from:"
+		mapfile -t chosen_remotes < <(gum choose --ordered --no-limit --selected="${csv_remotes}" "${all_remotes[@]}")
+		printf "\n"
+	fi
 
 	while :; do
 		mapfile -t all_branches < <(git branch --format '%(refname:lstrip=2)' --merged | sort -uV | grep -v -E "^${default_branch}$")
 
-		if [[ -z ${csv_branches} ]]; then
-			local save_ifs="${IFS}"
-			IFS=","
-			csv_branches="${all_branches[*]}"
-			IFS="${save_ifs}"
-		fi
-
-		println "# Choose one or more branches to delete:"
-		mapfile -t chosen_branches < <(gum choose --ordered --no-limit --selected="${csv_branches}" "${all_branches[@]}")
-		printf "\n"
-
-		println "## Selected branches:"
-		printf "\t%s\n" "${chosen_branches[@]}"
-		printf "\n"
-
-		if gum confirm "Delete the selected branches?"; then
+		if ${headless_mode}; then
+			chosen_branches=("${all_branches[@]}")
 			break
 		else
-			save_ifs="${IFS}"
-			IFS=","
-			csv_branches="${chosen_branches[*]}"
-			IFS="${save_ifs}"
+			if [[ -z ${csv_branches} ]]; then
+				local save_ifs="${IFS}"
+				IFS=","
+				csv_branches="${all_branches[*]}"
+				IFS="${save_ifs}"
+			fi
+
+			println "# Choose one or more branches to delete:"
+			mapfile -t chosen_branches < <(gum choose --ordered --no-limit --selected="${csv_branches}" "${all_branches[@]}")
+			printf "\n"
+
+			println "## Selected branches:"
+			printf "\t%s\n" "${chosen_branches[@]}"
+			printf "\n"
+
+			if gum confirm "Delete the selected branches?"; then
+				break
+			else
+				save_ifs="${IFS}"
+				IFS=","
+				csv_branches="${chosen_branches[*]}"
+				IFS="${save_ifs}"
+			fi
 		fi
 	done
 

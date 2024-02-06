@@ -11,6 +11,7 @@ Just finished [Effortless](https://gregmckeown.com/books/effortless/) and I'm tr
     - Go through my ~/.gitconfig files and manual command clumps and create v1 versions of them first.
     - Only working on one script at a time.
     - Mostly only using [Bash](https://www.gnu.org/software/bash/manual/bash.html), [Gum](https://github.com/charmbracelet/gum) and [Glow](https://github.com/charmbracelet/glow)
+    - Adding headless modes to some of the scripts.
 
 - v2 - improve them without burning out, over effort, or maximizing diminishing returns
 
@@ -85,3 +86,5 @@ If you need to perform a surgical deletion of the branch, do it by hand.
 
 Almost the same as `git-delete-branch-helper`.
 The difference is that the user starts with all the merged branches selected and all the not-merged branches are omitted from the selection screen.
+
+- Supports headless mode so it can be run from git.
