@@ -36,6 +36,15 @@ go install github.com/maaslalani/confetty@latest
 
 ## Helpers
 
+To intall the git helpers run the following commands:
+
+```bash
+cd ~/git_remote
+git clone https://github.com/vpayno/git-helpers.git
+cd ./git-helpers
+./install-git-aliases.sh
+```
+
 ### git-commit-helper
 
 Not a dumb tool, it helps:
