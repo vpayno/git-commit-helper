@@ -196,7 +196,10 @@ main() {
 
 	# randomly celebrate
 	if ((RANDOM % 5 == 3)); then
-		timeout 5 confetty
+		# timeout 5 confetty wasn't working as expected
+		confetty &
+		sleep 5s
+		kill %1
 	fi
 
 	println "# Deleted ${deleted_count} of ${#chosen_branches[@]} branches."
