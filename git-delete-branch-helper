@@ -69,7 +69,7 @@ main() {
 	fi
 
 	if [[ ${current_branch} != "${default_branch}" ]]; then
-		println "## changing branch from %s to %s" "$(git branch --show-current)" "${default_branch}"
+		println "## changing branch from $(git branch --show-current) to ${default_branch}"
 		git switch "${default_branch}" || exit
 		printf "\n"
 	fi
