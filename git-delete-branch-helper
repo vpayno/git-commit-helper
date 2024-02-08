@@ -61,7 +61,7 @@ main() {
 		exit 1
 	fi
 
-	if ! git branch --format '%(refname:lstrip=2)' --list main | grep -q "^${default_branch}$"; then
+	if ! git branch --format '%(refname:lstrip=2)' | grep -q "^${default_branch}$"; then
 		println "# ERROR: default branch [${default_branch}] doesn't exist"
 		exit 1
 	else
