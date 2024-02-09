@@ -20,17 +20,23 @@ Just finished [Effortless](https://gregmckeown.com/books/effortless/) and I'm tr
 
 ## Dependencies
 
-Use the script `./install-deps.sh` to install the following dependencies:
+Note: you can use [RunMe](https://github.com/stateful/runme) to use this readme as a playbook.
+
+To install all the dependencies at once you can use the included installation script:
+
+```bash { name=install-dep-all category=dependency interactive=false closeTerminalOnSuccess=false }
+./install-deps.sh
+```
 
 - [Gum](https://github.com/charmbracelet/gum)
 
-```text
+```bash { name=install-dep-gum category=dependency interactive=false closeTerminalOnSuccess=false }
 go install github.com/charmbracelet/gum@latest
 ```
 
 - [Confetty](https://github.com/maaslalani/confetty)
 
-```text
+```bash { name=install-dep-confetty category=dependency interactive=false closeTerminalOnSuccess=false }
 go install github.com/maaslalani/confetty@latest
 ```
 
@@ -38,7 +44,7 @@ go install github.com/maaslalani/confetty@latest
 
 To intall the git helpers run the following commands:
 
-```bash
+```bash { name=install-git-helpers category=setup interactive=false closeTerminalOnSuccess=false }
 cd ~/git_remote
 git clone https://github.com/vpayno/git-helpers.git
 cd ./git-helpers
