@@ -18,7 +18,19 @@ Just finished [Effortless](https://gregmckeown.com/books/effortless/) and I'm tr
     - Use these as practice for learning Go+Cue+BubbleTea.
     - Slow is smooth, smooth is fast.
 
-## Dependencies
+## Setup
+
+To intall the git helpers and project dependencies run the following commands:
+
+```bash { name=install-git-helpers category=setup interactive=false closeTerminalOnSuccess=false }
+cd ~/git_remote
+git clone https://github.com/vpayno/git-helpers.git
+cd ./git-helpers
+./install-git-aliases.sh
+./install-deps.sh
+```
+
+### Dependencies
 
 Note: you can use [RunMe](https://github.com/stateful/runme) to use this readme as a playbook.
 
@@ -41,15 +53,6 @@ go install github.com/maaslalani/confetty@latest
 ```
 
 ## Helpers
-
-To intall the git helpers run the following commands:
-
-```bash { name=install-git-helpers category=setup interactive=false closeTerminalOnSuccess=false }
-cd ~/git_remote
-git clone https://github.com/vpayno/git-helpers.git
-cd ./git-helpers
-./install-git-aliases.sh
-```
 
 ### git-commit-helper
 
