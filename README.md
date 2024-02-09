@@ -22,7 +22,7 @@ Just finished [Effortless](https://gregmckeown.com/books/effortless/) and I'm tr
 
 To intall the git helpers and project dependencies run the following commands:
 
-```bash { name=install-git-helpers category=setup interactive=false closeTerminalOnSuccess=false }
+```bash { name=setup-git-helpers category=setup interactive=false closeTerminalOnSuccess=false }
 cd ~/git_remote
 git clone https://github.com/vpayno/git-helpers.git
 cd ./git-helpers
@@ -53,6 +53,12 @@ go install github.com/maaslalani/confetty@latest
 ```
 
 ## Helpers
+
+Install or refresh git aliases for the helpers.
+
+```bash { name=install-git-helpers category=setup,git interactive=false closeTerminalOnSuccess=false }
+./install-git-aliases.sh
+```
 
 ### git-commit-helper
 
