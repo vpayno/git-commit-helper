@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 
+if [[ ! -f install-git-aliases.sh ]]; then
+	printf "ERROR: you must run this from the git-helpers repo\n"
+	exit 1
+fi
+
 git config --global alias.bc '!'"${PWD}"'/git-clean-up-branches-helper --headless'
 git config --global alias.hf '!'"${PWD}"'/git-fixup-helper'
 git config --global alias.hc '!'"${PWD}"'/git-commit-helper'
