@@ -52,6 +52,18 @@ go install github.com/charmbracelet/gum@latest
 go install github.com/maaslalani/confetty@latest
 ```
 
+- [GitHub Cli](https://github.com/cli/cli)
+
+```bash { bacground=false category=dependency closeTerminalOnSuccess=false excludeFromRunAll=true interactive=true interpreter=bash name=install-dep-github-cli promptEnv=true terminalRows=10 }
+go install github.com/cli/cli/v2/cmd/gh@latest
+```
+
+- [GitLab Cli](https://gitlab.com/gitlab-org/cli)
+
+```bash { bacground=false category=dependency closeTerminalOnSuccess=false excludeFromRunAll=true interactive=true interpreter=bash name=install-dep-gitlab-cli promptEnv=true terminalRows=10 }
+go install gitlab.com/gitlab-org/cli/cmd/glab@latest
+```
+
 ## Helpers
 
 Install or refresh git aliases for the helpers.
