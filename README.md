@@ -22,7 +22,7 @@ Just finished [Effortless](https://gregmckeown.com/books/effortless/) and I'm tr
 
 To intall the git helpers and project dependencies run the following commands:
 
-```bash { name=setup-git-helpers category=setup interactive=false closeTerminalOnSuccess=false }
+```bash { bacground=false category=setup closeTerminalOnSuccess=false excludeFromRunAll=true interactive=true interpreter=bash name=setup-git-helpers promptEnv=true terminalRows=10 }
 cd ~/git_remote
 git clone https://github.com/vpayno/git-helpers.git
 cd ./git-helpers
@@ -36,19 +36,19 @@ Note: you can use [RunMe](https://github.com/stateful/runme) to use this readme 
 
 To install all the dependencies at once you can use the included installation script:
 
-```bash { name=install-dep-all category=dependency interactive=false closeTerminalOnSuccess=false }
+```bash { bacground=false category=setup closeTerminalOnSuccess=false excludeFromRunAll=false interactive=true interpreter=bash name=install-dep-all promptEnv=true terminalRows=10 }
 ./install-deps.sh
 ```
 
 - [Gum](https://github.com/charmbracelet/gum)
 
-```bash { name=install-dep-gum category=dependency interactive=false closeTerminalOnSuccess=false }
+```bash { bacground=false category=dependency closeTerminalOnSuccess=false excludeFromRunAll=true interactive=true interpreter=bash name=install-dep-gum promptEnv=true terminalRows=10 }
 go install github.com/charmbracelet/gum@latest
 ```
 
 - [Confetty](https://github.com/maaslalani/confetty)
 
-```bash { name=install-dep-confetty category=dependency interactive=false closeTerminalOnSuccess=false }
+```bash { bacground=false category=dependency closeTerminalOnSuccess=false excludeFromRunAll=true interactive=true interpreter=bash name=install-dep-confetty promptEnv=true terminalRows=10 }
 go install github.com/maaslalani/confetty@latest
 ```
 
@@ -56,7 +56,7 @@ go install github.com/maaslalani/confetty@latest
 
 Install or refresh git aliases for the helpers.
 
-```bash { name=install-git-helpers category=setup,git interactive=false closeTerminalOnSuccess=false }
+```bash { bacground=false category=refresh,git closeTerminalOnSuccess=false excludeFromRunAll=false interactive=true interpreter=bash name=install-git-helpers promptEnv=true terminalRows=10 }
 ./install-git-aliases.sh
 ```
 
