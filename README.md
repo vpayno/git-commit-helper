@@ -124,3 +124,15 @@ Almost the same as `git-delete-branch-helper`.
 The difference is that the user starts with all the merged branches selected and all the not-merged branches are omitted from the selection screen.
 
 - Supports headless mode so it can be run from git.
+
+### git-fetch-cr-helper
+
+Used to simplify the process of checking out a change review (CR) branch from GitHub/GitLab.
+
+- Uses git worktrees.
+- Checks out change review to immutable branch `prs-number` (GitHub) or `mrs-number` (GitLab).
+- If both GitHub and GitLab push URLs are found for the `origin` remote, check GitHub first, then Gitlab.
+- Uses [gh](https://github.com/cli/cli) and [glab](https://gitlab.com/gitlab-org/cli) clis.
+- Creates worktree with the same branch name as the one used in the change review.
+- Adds remote (when the change review author used a fork) that can be tracked and pushed to.
+- Reminds users to use `git-fixup-helper` when modifying existing commits to make it easier to show/review changes by the change review author..

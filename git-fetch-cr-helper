@@ -1,0 +1,330 @@
+#!/usr/bin/env bash
+
+set -e
+
+declare GH_PR_DATA_FILE
+declare GL_MR_DATA_FILE
+
+setup() {
+	GH_PR_DATA_FILE="$(mktemp)"
+	GL_MR_DATA_FILE="$(mktemp)"
+} # setup()
+
+cleanup() {
+	[[ -f ${GH_PR_DATA_FILE} ]] && rm -f "${GH_PR_DATA_FILE}"
+	[[ -f ${GL_MR_DATA_FILE} ]] && rm -f "${GL_MR_DATA_FILE}"
+} # cleanup()
+
+# use `trap -l` to show all signal number,name pairs
+trap cleanup EXIT
+
+setup
+
+config() {
+	local -a args=("${@}")
+
+	git config --local "${args[@]}"
+} # config()
+
+println() {
+	gum format --type="markdown" <<-EOF
+		${@}
+	EOF
+	printf "\n"
+} # println()
+
+get_gh_pr_data() {
+	gh pr list --json number,headRefName,title,author | jq . >"${GH_PR_DATA_FILE}"
+} # get_gh_pr_data()
+
+get_cr_remote_name() {
+	local -a remotes
+	local chosen_remote
+
+	mapfile -t remotes < <(git remote | sort -uV)
+	chosen_remote="$(gum choose --limit=1 --selected=origin "${remotes[@]}")"
+
+	printf "%s" "${chosen_remote}"
+} # get_cr_remote_name()
+
+get_cr_remote_url() {
+	local remote="${1}"
+
+	local remote_url
+
+	remote_url="$(git remote get-url --push "${remote}")"
+
+	printf "%s" "${remote_url}"
+} # get_cr_remote_url()
+
+get_cr_fetch_path() {
+	local remote_url="${1}"
+
+	local -a records
+	local -a cr_numbers
+	local cr_number
+
+	if [[ ${remote_url} =~ git@github ]]; then
+		get_gh_pr_data
+
+		mapfile -t cr_numbers < <(jq -r '.[].number' "${GH_PR_DATA_FILE}")
+
+		if [[ ${#cr_numbers[@]} -eq 0 ]]; then
+			println "# ERROR: no pull-requests found"
+			exit 1
+		fi
+
+		for number in "${cr_numbers[@]}"; do
+			local branch
+			local title
+			local record
+
+			branch="$(jq -r --argjson number "${number}" '.[] | select(.number==$number) | .headRefName' "${GH_PR_DATA_FILE}")"
+			title="$(jq -r --argjson number "${number}" '.[] | select(.number==$number) | .title' "${GH_PR_DATA_FILE}")"
+			printf -v record "%6d | %42s | %s" "${number}" "${branch}" "${title}"
+
+			records+=("${record}")
+		done
+
+		chosen_pr="$(gum choose --limit=1 "${records[@]}")"
+		#      6 |                             "upgrade_axum" | "chore: update axum and shuttle dependencies to latest incompatible ve…"
+		cr_number="${chosen_pr%%|*}"
+
+		# gh: pull/"${num}"/head:prs/"${num}"
+		printf "pull/%d/head:prs/%d" "${cr_number// /}" "${cr_number// /}"
+		return
+	fi
+
+	if [[ ${remote_url} =~ git@gitlab ]]; then
+		# gl: merge-requests/"${num}"/head:mrs/"${num}"
+		printf "merge-requests/%s/head:mrs/%s" "${cr_number}" "${cr_number}"
+		return
+	fi
+
+	println "# ERROR: unknown remote server type, ${remote_url}"
+	exit 1
+} # get_cr_fetch_path()
+
+main() {
+	local default_branch
+	local remote_upstream
+	local remote_fork
+	local chosen_remote_url
+
+	local message
+
+	local repo_main_path
+	local worktree_path_prefix
+	local worktree_path
+
+	local source_branch
+	local current_remote
+
+	local cr_fetch_path
+	local cr_remote_url
+	local cr_branch
+	local cr_number
+
+	local repo_name
+	local remote_branch
+
+	local author_remote_url
+	local author_remote_url_p1
+	local author_remote_url_p2
+	local cr_author
+
+	if config misc.default-branch >&/dev/null; then
+		default_branch="$(config --get misc.default-branch)"
+	else
+		message="$(
+			cat <<-EOF
+				# ERROR: Default Branch Not Found
+				Set the default branch with the command
+				\`\`\`text
+				git config --local misc.default-branch main
+				\`\`\`
+
+				use \`main\`, \`master\`, \`develop\`, etc - it needs to be a real branch and the project's default branch
+			EOF
+		)"
+		println "${message}"
+		exit 1
+	fi
+
+	if ! git branch --format '%(refname:lstrip=2)' --list main | grep -q "^${default_branch}$"; then
+		println "# ERROR: default branch [${default_branch}] doesn't exist"
+		exit 1
+	else
+		println "# Default branch, ${default_branch}, exists, continuing."
+	fi
+
+	if config misc.remote-upstream >&/dev/null; then
+		remote_upstream="$(config --get misc.remote-upstream)"
+	else
+		message="$(
+			cat <<-EOF
+				# ERROR: Remote Upstream Not Found
+				Set the default upstream remote with the command
+				\`\`\`text
+				git config --local misc.remote-upstream ${current_remote}
+				\`\`\`
+
+				Use \`origin\`, \`upstream\`, \`github\`, \`gitlab\`, etc.
+				It needs to be a remote returned by \`git remote -v\`.
+			EOF
+		)"
+		println "${message}"
+		exit 1
+	fi
+
+	if ! git remote --verbose | awk '{ print $1 }' | sort -uV | grep -q "^${remote_upstream}$"; then
+		println "# ERROR: remote upstream [${remote_upstream}] doesn't exist"
+		exit 1
+	else
+		println "# Remote upstream, ${remote_upstream}, exists, continuing."
+	fi
+
+	if config misc.remote-fork >&/dev/null; then
+		remote_fork="$(config --get misc.remote-fork)"
+	else
+		message="$(
+			cat <<-EOF
+				# ERROR: Remote Upstream Not Found
+				Set the default fork remote with the command
+				\`\`\`text
+				git config --local misc.remote-fork ${current_remote}
+				\`\`\`
+
+				Use \`fork\`, \`${USER}\`, etc.
+				It needs to be a remote returned by \`git remote -v\`.
+			EOF
+		)"
+		println "${message}"
+		exit 1
+	fi
+
+	if ! git remote --verbose | awk '{ print $1 }' | sort -uV | grep -q "^${remote_fork}$"; then
+		println "# ERROR: remote fork [${remote_fork}] doesn't exist"
+		exit 1
+	else
+		println "# Remote fork, ${remote_fork}, exists, continuing."
+	fi
+
+	repo_main_path="$(git rev-parse --show-toplevel)"
+
+	println "# switching to default branch"
+	git switch "${default_branch}"
+
+	source_branch="$(git branch --show-current)"
+	current_remote="$(git rev-parse --abbrev-ref --symbolic-full-name "@{u}" | cut -f1 -d'/')"
+
+	cr_remote_name="$(get_cr_remote_name)"
+	cr_remote_url="$(get_cr_remote_url "${cr_remote_name}")"
+
+	# pull/$1/head:prs/$1
+	# merge-requests/$1/head:mrs/$1
+	cr_fetch_path="$(get_cr_fetch_path "${cr_remote_url}")"
+	cr_branch="${cr_fetch_path##*:}"
+	cr_number="${cr_fetch_path##*/}"
+
+	repo_name="$(git remote get-url "${cr_remote_name}")"
+	repo_name="${repo_name#*/}"
+	repo_name="${repo_name%.*}"
+
+	remote_branch="$(jq -r --argjson number "${cr_number}" '.[] | select(.number==$number) | .headRefName' "${GH_PR_DATA_FILE}")"
+
+	cr_author="$(jq -r --argjson number "${cr_number}" '.[] | select(.number==$number) | .author.login' "${GH_PR_DATA_FILE}")"
+
+	chosen_remote_url="$(git remote get-url "${cr_remote_name}")"
+	author_remote_url_p1="${chosen_remote_url%:*}"
+	author_remote_url_p2="${chosen_remote_url#*/}"
+	printf -v author_remote_url "%s:%s/%s" "${author_remote_url_p1}" "${cr_author}" "${author_remote_url_p2}"
+
+	if ! git remote | grep -q -E "\b${cr_author}\b"; then
+		git remote add "${cr_author}" "${author_remote_url}"
+		git remote -v
+	fi
+
+	println "# fetching remote change review"
+	echo git fetch "${cr_remote_name}" "${cr_fetch_path}"
+	git fetch "${cr_remote_name}" "${cr_fetch_path}"
+
+	println "# switching to change review branch"
+
+	git switch "${cr_branch}"
+
+	worktree_path_prefix="${repo_main_path}-cr-"
+	worktree_path="${worktree_path_prefix}${remote_branch}"
+
+	println "# Creating branch: ${remote_branch}"
+	println "# Creating worktree: ${worktree_path}"
+	printf "\n"
+
+	git worktree add -B "${remote_branch}" "${worktree_path}"
+	git fetch "${cr_author}"
+	git branch --set-upstream-to="${cr_author}/${remote_branch}" "${remote_branch}"
+	printf "\n"
+
+	git switch "${default_branch}"
+
+	println "# Available worktrees:"
+	git worktree list
+	printf "\n"
+
+	message="$(
+		cat <<-EOF
+			# Next steps:
+
+			\`\`\`text
+			pushd "${worktree_path}"
+
+			git branch --show-current
+
+			git log --pretty=format:'%h -%d %s (%cr) <%an>' --abbrev-commit --decorate -n 5
+			\`\`\`
+
+			# To create fixup commits
+
+			\`\`\`text
+			git hf
+			\`\`\`
+
+			# To push changes:
+
+			\`\`\`text
+			git push ${current_remote} ${remote_branch}
+			\`\`\`
+
+			# To show all branch changes:
+
+			\`\`\`text
+			git log --pretty=format:'%h -%d %s (%cr) <%an>' --abbrev-commit --decorate ${source_branch}..
+			\`\`\`
+
+			# To show unpushed branch changes:
+
+			\`\`\`text
+			git log --pretty=format:'%h -%d %s (%cr) <%an>' --abbrev-commit --decorate ${current_remote}/${remote_branch}..HEAD
+			\`\`\`
+
+			# Clean up steps:
+
+			\`\`\`text
+			pushd "${repo_main_path}"
+
+			git branch --show-current
+
+			git worktree list
+
+			git worktree remove "${worktree_path}"
+
+			git branch --delete ${remote_branch}
+
+			git push ${current_remote} --delete ${remote_branch}
+			\`\`\`
+		EOF
+	)"
+	println "${message}"
+} # main ()
+
+main "${@}"
