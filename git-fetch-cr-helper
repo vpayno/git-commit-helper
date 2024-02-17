@@ -33,15 +33,33 @@ println() {
 	printf "\n"
 } # println()
 
+choose_remote_type() {
+	gum choose --limit=1 github gitlab
+} # choose_remote_type()
+
 get_gh_pr_data() {
 	gh pr list --json number,headRefName,title,author | jq . >"${GH_PR_DATA_FILE}"
 } # get_gh_pr_data()
+
+get_gl_mr_data() {
+	# num|org_path|repo_name|branch_name
+	# 6|one/two/three|shuttle_rs-launchpad-no_2-web_project|upgrade_rocket
+	# 5|vpayno|shuttle_rs-launchpad-no_1-web_project|upgrade_axum
+	glab mr list | sed -r -e '/^![0-9]+/s/^!([0-9]+)\b\s+([a-zA-Z0-9_\/-]+?)+\/([a-zA-Z0-9_-]+)![0-9]+.*\(([a-zA-Z0-9_-]+)\)$/\1|\2|\3|\4/g' | grep -E '^[0-9]+' >"${GL_MR_DATA_FILE}"
+} # get_gl_mr_data()
+
+get_gl_mr_author() {
+	local -i cr_num="${1:-0}"
+
+	glab mr view "${cr_num}" | awk '/^author/ { print $NF }'
+} # get_gl_mr_author()
 
 get_cr_remote_name() {
 	local -a remotes
 	local chosen_remote
 
 	mapfile -t remotes < <(git remote | sort -uV)
+
 	chosen_remote="$(gum choose --limit=1 --selected=origin "${remotes[@]}")"
 
 	printf "%s" "${chosen_remote}"
@@ -57,14 +75,37 @@ get_cr_remote_url() {
 	printf "%s" "${remote_url}"
 } # get_cr_remote_url()
 
+get_cr_branch() {
+	local remote_type="${1}"
+	local -i cr_number="${2}"
+
+	if [[ ${remote_type} == github ]]; then
+		jq -r --argjson number "${cr_number}" '.[] | select(.number==$number) | .headRefName' "${GH_PR_DATA_FILE}"
+	elif [[ ${remote_type} == gitlab ]]; then
+		grep -E "^${cr_number}\b" "${GL_MR_DATA_FILE}" | cut -f4 -d'|'
+	fi
+} # get_cr_branch()
+
+get_cr_author() {
+	local remote_type="${1}"
+	local -i cr_number="${2}"
+
+	if [[ ${remote_type} == github ]]; then
+		jq -r --argjson number "${cr_number}" '.[] | select(.number==$number) | .author.login' "${GH_PR_DATA_FILE}"
+	elif [[ ${remote_type} == gitlab ]]; then
+		glab mr view "${cr_number}" | awk '/^author/ { print $NF }'
+	fi
+} # get_cr_author()
+
 get_cr_fetch_path() {
-	local remote_url="${1}"
+	local remote_type="${1}"
+	local remote_url="${2}"
 
 	local -a records
 	local -a cr_numbers
 	local cr_number
 
-	if [[ ${remote_url} =~ git@github ]]; then
+	if [[ ${remote_type} == github ]]; then
 		get_gh_pr_data
 
 		mapfile -t cr_numbers < <(jq -r '.[].number' "${GH_PR_DATA_FILE}")
@@ -95,7 +136,22 @@ get_cr_fetch_path() {
 		return
 	fi
 
-	if [[ ${remote_url} =~ git@gitlab ]]; then
+	if [[ ${remote_type} == gitlab ]]; then
+		get_gl_mr_data
+
+		mapfile -t cr_numbers < <(cut -f1 -d'|' "${GL_MR_DATA_FILE}")
+
+		if [[ ${#cr_numbers[@]} -eq 0 ]]; then
+			println "# ERROR: no pull-requests found"
+			exit 1
+		fi
+
+		mapfile -t records < <(cat "${GL_MR_DATA_FILE}")
+
+		chosen_pr="$(gum choose --limit=1 "${records[@]}")"
+		#      6 |                             "upgrade_axum" | "chore: update axum and shuttle dependencies to latest incompatible ve…"
+		cr_number="${chosen_pr%%|*}"
+
 		# gl: merge-requests/"${num}"/head:mrs/"${num}"
 		printf "merge-requests/%s/head:mrs/%s" "${cr_number}" "${cr_number}"
 		return
@@ -125,6 +181,7 @@ main() {
 	local cr_branch
 	local cr_number
 
+	local remote_type
 	local repo_name
 	local remote_branch
 
@@ -218,12 +275,16 @@ main() {
 	source_branch="$(git branch --show-current)"
 	current_remote="$(git rev-parse --abbrev-ref --symbolic-full-name "@{u}" | cut -f1 -d'/')"
 
+	println "# Please select the remote type:"
+	remote_type="$(choose_remote_type)"
+
+	println "# Please select the remote you want to use:"
 	cr_remote_name="$(get_cr_remote_name)"
 	cr_remote_url="$(get_cr_remote_url "${cr_remote_name}")"
 
 	# pull/$1/head:prs/$1
 	# merge-requests/$1/head:mrs/$1
-	cr_fetch_path="$(get_cr_fetch_path "${cr_remote_url}")"
+	cr_fetch_path="$(get_cr_fetch_path "${remote_type}" "${cr_remote_url}")"
 	cr_branch="${cr_fetch_path##*:}"
 	cr_number="${cr_fetch_path##*/}"
 
@@ -231,9 +292,9 @@ main() {
 	repo_name="${repo_name#*/}"
 	repo_name="${repo_name%.*}"
 
-	remote_branch="$(jq -r --argjson number "${cr_number}" '.[] | select(.number==$number) | .headRefName' "${GH_PR_DATA_FILE}")"
+	remote_branch="$(get_cr_branch "${remote_type}" "${cr_number}")"
 
-	cr_author="$(jq -r --argjson number "${cr_number}" '.[] | select(.number==$number) | .author.login' "${GH_PR_DATA_FILE}")"
+	cr_author="$(get_cr_author "${remote_type}" "${cr_number}")"
 
 	chosen_remote_url="$(git remote get-url "${cr_remote_name}")"
 	author_remote_url_p1="${chosen_remote_url%:*}"
@@ -261,9 +322,12 @@ main() {
 	printf "\n"
 
 	git worktree add -B "${remote_branch}" "${worktree_path}"
-	git fetch "${cr_author}"
-	git branch --set-upstream-to="${cr_author}/${remote_branch}" "${remote_branch}"
-	printf "\n"
+
+	if [[ ${cr_author} != app/dependabot ]]; then
+		git fetch "${cr_author}"
+		git branch --set-upstream-to="${cr_author}/${remote_branch}" "${remote_branch}"
+		printf "\n"
+	fi
 
 	git switch "${default_branch}"
 
