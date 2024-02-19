@@ -136,3 +136,19 @@ Used to simplify the process of checking out a change review (CR) branch from Gi
 - Creates worktree with the same branch name as the one used in the change review.
 - Adds remote (when the change review author used a fork) that can be tracked and pushed to.
 - Reminds users to use `git-fixup-helper` when modifying existing commits to make it easier to show/review changes by the change review author..
+
+### git-master-to-main-migration-helper
+
+I hate it when someone renames the `master` branch to `main` without taking care that other developers don't just repush the `master` branch and keep working with it.
+
+This helper helps with that problem. It's a lot of steps to run by hand over and over again so this is a perfect task for automation.
+
+- clone `master` to `main`
+- update the default branch on github and/or gitlab
+- make sure force pushes are blocked on `main`
+- reset commit history on `master` to 1 commit
+    - add new readme with info on the rename and instructions they should run on their local clone
+    - ammend and reword the only commit
+    - goal is to make it very obvious they need to stop using `master` and to start using `main`
+    - force push `master`
+    - block force pushes on `master` upstream(s)

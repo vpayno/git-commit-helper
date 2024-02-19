@@ -1,0 +1,285 @@
+#!/usr/bin/env bash
+
+set -e
+
+config() {
+	local -a args=("${@}")
+
+	git config --local "${args[@]}"
+} # config()
+
+println() {
+	gum format --type="markdown" <<-EOF
+		${@}
+	EOF
+	printf "\n"
+} # println()
+
+choose_remote_type() {
+	gum choose --limit=1 github gitlab
+} # choose_remote_type()
+
+get_cr_remote_name() {
+	local -a remotes
+	local chosen_remote
+
+	mapfile -t remotes < <(git remote | sort -uV)
+
+	chosen_remote="$(gum choose --limit=1 --selected=origin "${remotes[@]}")"
+
+	printf "%s" "${chosen_remote}"
+} # get_cr_remote_name()
+
+get_remote_url_prefix() {
+	local remote="${1:-origin}"
+
+	git remote get-url --push "${remote}" | sed -r -e 's|git@|https://|g; s|:|/|g; s|[.]git$||g'
+} # get_remote_url_prefix()
+
+main() {
+	local remote_upstream
+	local remote_fork
+
+	local message
+
+	local repo_name
+
+	local chosen_remote
+	local remote_url_prefix
+
+	local -i commit_count
+
+	local current_remote
+
+	current_remote="$(git rev-parse --abbrev-ref --symbolic-full-name "@{u}" | cut -f1 -d'/')"
+
+	if git rev-parse --verify main; then
+		println "# This repo already has a main branch"
+		exit
+	fi
+
+	if ! git rev-parse --verify master; then
+		println "# This repo doesn't have a master branch"
+		exit
+	fi
+
+	if config misc.remote-upstream >&/dev/null; then
+		remote_upstream="$(config --get misc.remote-upstream)"
+	else
+		message="$(
+			cat <<-EOF
+				# ERROR: Remote Upstream Not Found
+				Set the default upstream remote with the command
+				\`\`\`text
+				git config --local misc.remote-upstream ${current_remote}
+				\`\`\`
+
+				Use \`origin\`, \`upstream\`, \`github\`, \`gitlab\`, etc.
+				It needs to be a remote returned by \`git remote -v\`.
+			EOF
+		)"
+		println "${message}"
+		exit 1
+	fi
+
+	if ! git remote --verbose | awk '{ print $1 }' | sort -uV | grep -q "^${remote_upstream}$"; then
+		println "# ERROR: remote upstream [${remote_upstream}] doesn't exist"
+		exit 1
+	else
+		println "# Remote upstream, ${remote_upstream}, exists, continuing."
+	fi
+
+	if config misc.remote-fork >&/dev/null; then
+		remote_fork="$(config --get misc.remote-fork)"
+	else
+		message="$(
+			cat <<-EOF
+				# ERROR: Remote Upstream Not Found
+				Set the default fork remote with the command
+				\`\`\`text
+				git config --local misc.remote-fork ${current_remote}
+				\`\`\`
+
+				Use \`fork\`, \`${USER}\`, etc.
+				It needs to be a remote returned by \`git remote -v\`.
+			EOF
+		)"
+		println "${message}"
+		exit 1
+	fi
+
+	if ! git remote --verbose | awk '{ print $1 }' | sort -uV | grep -q "^${remote_fork}$"; then
+		println "# ERROR: remote fork [${remote_fork}] doesn't exist"
+		exit 1
+	else
+		println "# Remote fork, ${remote_fork}, exists, continuing."
+	fi
+
+	if ! gum confirm "# Continue with master to main branch migration?"; then
+		exit
+	fi
+
+	println "# Please select the remote type"
+	remote_type="$(choose_remote_type)"
+	if [[ -z ${remote_type} ]]; then
+		exit
+	fi
+	printf "\n"
+
+	println "# Please select remote to use"
+	chosen_remote="$(get_cr_remote_name)"
+	if [[ -z ${chosen_remote} ]]; then
+		exit
+	fi
+	printf "\n"
+
+	println "# Available worktrees:"
+	git worktree list
+	printf "\n"
+
+	println "# Cloning master to main"
+
+	echo Running: git switch master
+	git switch master
+	printf "\n"
+
+	echo Running: git pull "${chosen_remote}" master
+	git pull "${chosen_remote}" master
+	printf "\n"
+
+	echo Running: git branch main
+	git branch main
+	printf "\n"
+
+	echo Running: git push -u "${chosen_remote}" main
+	git push -u "${chosen_remote}" main
+	printf "\n"
+
+	remote_url_prefix="$(get_remote_url_prefix "${chosen_remote}")"
+
+	if [[ ${remote_type} == github ]]; then
+		println "
+			# Please go to the GitHab project URL ${remote_url_prefix}/settings to
+
+			1. General -> Default branch
+
+				master to main
+
+			2. Add/Edit Branch protection rules for main branch.
+
+				a. Add Rule
+				b. Branch name: main
+				c. Create
+
+			3. Edit protection rule for master branch to allow force pushes.
+
+				a. Leave the tab open so you can easily go back and disable force pushes on master.
+		"
+	elif [[ ${remote_type} == gitlab ]]; then
+		println "
+			# Please go to the GitLab prouject URL ${remote_url_prefix}/-/settings/repository to
+
+			1. Change default branch from master to main.
+
+				Branch Defaults -> Default Branch -> master to main -> Save Changes
+
+			2. Add main as a protected branch.
+
+				Protected Branches -> Add protected branch
+
+					Branch: main
+					Allowed to merge: Maintainers
+					Allowed to push and merge: Maintainers | Developers + Maintainers
+					Allowed to force push: false
+
+					Click Protect button
+
+			3. Allow force pushes to master branch.
+
+				a. Leave the tab open so you can easily go back and disable force pushes on master.
+		"
+	fi
+
+	while ! gum confirm "Have you completed the steps above?"; do
+		sleep 0.1s
+	done
+
+	println "# Resetting master branch history"
+	commit_count="$(git rev-list --count --all)"
+	((commit_count -= 1))
+	echo Running: git reset --hard HEAD~"${commit_count}"
+	git reset --hard HEAD~"${commit_count}"
+	printf "\n"
+
+	repo_name="$(git remote get-url "${chosen_remote}")"
+	repo_name="${repo_name#*/}"
+	repo_name="${repo_name%.*}"
+
+	cat >README.md <<-EOF
+		# ${repo_name}
+
+		This is not the branch you are looking for.
+		The \`master\` branch has been renamed to \`main\`.
+
+		## Please follow these steps to update your local repo:
+
+		\`\`\`bash
+		git branch -m master main
+
+		git branch --set-upstream-to fork/main main
+
+		git push -u fork main
+
+		git remote set-head fork -a
+
+		git config --local misc.default-branch main
+		\`\`\`
+	EOF
+
+	git add -u README.md
+	git commit --amend -m 'docs: update master branch readme with branch migration notes'
+	printf "\n"
+
+	git push --force "${chosen_remote}" master
+	printf "\n"
+
+	println "# Added new readme to master branch"
+	glow README.md
+	printf "\n"
+
+	echo Running: git config --local misc.default-branch main
+	git config --local misc.default-branch main
+	printf "\n"
+
+	println "# Now go back to the repo settings page and block force pushes to master."
+
+	while ! gum confirm "Have you completed the steps above?"; do
+		sleep 0.1s
+	done
+
+	message="$(
+		cat <<-EOF
+			# Next steps:
+
+			Let users know that the \`master\` branch has been renamed to \`main\`.
+
+			Please remind them they will need to run the following commands to update their local repo.
+
+			\`\`\`bash
+			git branch -m master main
+
+			git branch --set-upstream-to fork/main main
+
+			git push -u fork main
+
+			git remote set-head fork -a
+
+			git config --local misc.default-branch main
+			\`\`\`
+		EOF
+	)"
+
+	println "${message}"
+} # main ()
+
+main "${@}"
