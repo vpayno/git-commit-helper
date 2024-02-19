@@ -46,6 +46,12 @@ To install all the dependencies at once you can use the included installation sc
 go install github.com/charmbracelet/gum@latest
 ```
 
+- [Glow](https://github.com/charmbracelet/glow)
+
+```bash { bacground=false category=dependency closeTerminalOnSuccess=false excludeFromRunAll=true interactive=true interpreter=bash name=install-dep-glow promptEnv=true terminalRows=10 }
+go install github.com/charmbracelet/glow@latest
+```
+
 - [Confetty](https://github.com/maaslalani/confetty)
 
 ```bash { bacground=false category=dependency closeTerminalOnSuccess=false excludeFromRunAll=true interactive=true interpreter=bash name=install-dep-confetty promptEnv=true terminalRows=10 }

@@ -17,3 +17,7 @@ printf "\n"
 echo Running: go install gitlab.com/gitlab-org/cli/cmd/glab@latest
 go install gitlab.com/gitlab-org/cli/cmd/glab@latest
 printf "\n"
+
+echo Running: go install github.com/charmbracelet/glow@latest
+go install github.com/charmbracelet/glow@latest
+printf "\n"
