@@ -50,8 +50,18 @@ main() {
 		printf "\n"
 	fi
 
+	if [[ ${#chosen_remotes[@]} -eq 0 ]]; then
+		println "# No remotes chosen, exiting..."
+		exit
+	fi
+
 	while :; do
 		mapfile -t all_branches < <(git branch --format '%(refname:lstrip=2)' --merged | sort -uV | grep -v -E "^${default_branch}$")
+
+		if [[ ${#all_branches[@]} -eq 0 ]]; then
+			println "# No branches found, exiting..."
+			exit
+		fi
 
 		if ${headless_mode}; then
 			chosen_branches=("${all_branches[@]}")
@@ -71,6 +81,11 @@ main() {
 			println "## Selected branches:"
 			printf "\t%s\n" "${chosen_branches[@]}"
 			printf "\n"
+
+			if [[ ${#chosen_branches[@]} -eq 0 ]]; then
+				println "# No branches selected, exiting..."
+				exit
+			fi
 
 			if gum confirm "Delete the selected branches?"; then
 				break
