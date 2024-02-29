@@ -23,9 +23,8 @@ Just finished [Effortless](https://gregmckeown.com/books/effortless/) and I'm tr
 To intall the git helpers and project dependencies run the following commands:
 
 ```bash { bacground=false category=setup closeTerminalOnSuccess=false excludeFromRunAll=true interactive=true interpreter=bash name=setup-git-helpers promptEnv=true terminalRows=10 }
-cd ~/git_remote
-git clone https://github.com/vpayno/git-helpers.git
-cd ./git-helpers
+git clone https://github.com/vpayno/git-helpers.git ~/.git-helpers
+cd ~/.git-helpers
 ./install-git-aliases.sh
 ./install-deps.sh
 ```

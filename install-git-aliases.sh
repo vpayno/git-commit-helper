@@ -5,6 +5,21 @@ if [[ ! -f install-git-aliases.sh ]]; then
 	exit 1
 fi
 
+if [[ ! -d ${HOME}/.git-helpers ]]; then
+	declare old_pwd_parent
+	old_pwd_parent="$(dirname "${PWD}")"
+
+	printf "Moving %s to ~/.git-helpers...\n" "${PWD}"
+	mv -v "${PWD}" "${HOME}/.git-helpers"
+	printf "\n"
+
+	printf "Creating symlink in old location (%s)...\n" "${old_pwd_parent}"
+	cd "${old_pwd_parent}" || exit
+	ln -sv "${HOME}/.git-helpers" git-helpers
+	cd "${HOME}/.git-helpers" || exiT
+	printf "\n"
+fi
+
 git config --global alias.bc '!'"${PWD}"'/git-clean-up-branches-helper --headless'
 git config --global alias.hf '!'"${PWD}"'/git-fixup-helper'
 git config --global alias.hc '!'"${PWD}"'/git-commit-helper'
