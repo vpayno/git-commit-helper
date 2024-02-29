@@ -3,6 +3,13 @@
 
 set -e
 
+trap trap_ctrl_c INT
+
+trap_ctrl_c() {
+	println "# TRAP: caught Ctrl-C, exiting..."
+	exit
+} # trap_ctrl_c()
+
 config() {
 	local -a args=("${@}")
 
