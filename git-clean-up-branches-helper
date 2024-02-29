@@ -1,61 +1,14 @@
 #!/usr/bin/env bash
 
-set -e
+# shellcheck source=git-helpers-lib
+source "${HOME}/.git-helpers/git-helpers-lib" || exit
 
-config() {
-	local -a args=("${@}")
-
-	git config --local "${args[@]}"
-} # config()
-
-println() {
-	gum format --type="markdown" <<-EOF
-		${@}
-	EOF
-	printf "\n"
-} # println()
-
-key_exists() {
-	# exists key in array
-	# 0      1   2  3
-	eval '[[ "${'"${3}"'[${1}]+exists}" ]]'
-}
-
-usage() {
-	println "# git-clean-up-branches-helper"
-	println "This scripts helps you delete all merged branches"
-	println "-h | --help     : this screen"
-	println "-H | --headless : automatically deletes all merged branches on all remotes"
-} # usage()
-
-declare -a args=("${@}")
-declare arg
-
-declare headless_mode=false
-
-for arg in "${args[@]}"; do
-	case "${arg}" in
-		"-h") ;&
-		"--help")
-			usage
-			exit
-			;;
-		"-H") ;&
-		"--headless")
-			headless_mode=true
-			;;
-		*)
-			usage
-			exit
-			;;
-	esac
-done
+process_global_args
 
 main() {
 	local message
 
 	local default_branch
-	local current_branch
 
 	local -A map
 	local -a worktrees
@@ -71,25 +24,7 @@ main() {
 	local -a chosen_remotes
 	local remote
 
-	current_branch="$(git branch --show-current)"
-
-	if config misc.default-branch >&/dev/null; then
-		default_branch="$(config --get misc.default-branch)"
-	else
-		message="$(
-			cat <<-EOF
-				# ERROR: Default Branch Not Found
-				Set the default branch with the command
-				\`\`\`text
-				git config --local misc.default-branch main
-				\`\`\`
-
-				use \`main\`, \`master\`, \`develop\`, etc - it needs to be a real branch and the project's default branch
-			EOF
-		)"
-		println "${message}"
-		exit 1
-	fi
+	git_config_check_default_branch
 
 	if ! git branch --format '%(refname:lstrip=2)' | grep -q "^${default_branch}$"; then
 		println "# ERROR: default branch [${default_branch}] doesn't exist"
@@ -98,11 +33,7 @@ main() {
 		println "# Default branch, ${default_branch}, exists, continuing."
 	fi
 
-	if [[ ${current_branch} != "${default_branch}" ]]; then
-		println "## changing branch from $(git branch --show-current) to ${default_branch}"
-		git switch "${default_branch}" || exit
-		printf "\n"
-	fi
+	git_switch_to_default_branch
 
 	mapfile -t all_remotes < <(git remote | sort -uV)
 
@@ -194,13 +125,7 @@ main() {
 		println "# Errors encountered: ${error_count}"
 	fi
 
-	# randomly celebrate
-	if ((RANDOM % 5 == 3)); then
-		# timeout 5 confetty wasn't working as expected
-		confetty &
-		sleep 5s
-		kill %1
-	fi
+	celebrate
 
 	println "# Deleted ${deleted_count} of ${#chosen_branches[@]} branches."
 	printf "\n"
