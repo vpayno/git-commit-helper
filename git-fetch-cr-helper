@@ -275,10 +275,10 @@ main() {
 	source_branch="$(git branch --show-current)"
 	current_remote="$(git rev-parse --abbrev-ref --symbolic-full-name "@{u}" | cut -f1 -d'/')"
 
-	println "# Please select the remote type:"
+	println "# Please select the remote type from where the change review will be fetched from:"
 	remote_type="$(choose_remote_type)"
 
-	println "# Please select the remote you want to use:"
+	println "# Please select the remote you want to fetch the change review from:"
 	cr_remote_name="$(get_cr_remote_name)"
 	cr_remote_url="$(get_cr_remote_url "${cr_remote_name}")"
 
