@@ -20,9 +20,9 @@ Just finished [Effortless](https://gregmckeown.com/books/effortless/) and I'm tr
 
 ## Setup
 
-To intall the git helpers and project dependencies run the following commands:
+To install the git helpers and project dependencies run the following commands:
 
-```bash { bacground=false category=setup closeTerminalOnSuccess=false excludeFromRunAll=true interactive=true interpreter=bash name=setup-git-helpers promptEnv=true terminalRows=10 }
+```bash { background=false category=setup closeTerminalOnSuccess=false excludeFromRunAll=true interactive=true interpreter=bash name=setup-git-helpers promptEnv=true terminalRows=10 }
 git clone https://github.com/vpayno/git-helpers.git ~/.git-helpers
 cd ~/.git-helpers
 ./install-git-aliases.sh
@@ -35,37 +35,37 @@ Note: you can use [RunMe](https://github.com/stateful/runme) to use this readme 
 
 To install all the dependencies at once you can use the included installation script:
 
-```bash { bacground=false category=setup closeTerminalOnSuccess=false excludeFromRunAll=false interactive=true interpreter=bash name=install-dep-all promptEnv=true terminalRows=10 }
+```bash { background=false category=setup closeTerminalOnSuccess=false excludeFromRunAll=false interactive=true interpreter=bash name=install-dep-all promptEnv=true terminalRows=10 }
 ./install-deps.sh
 ```
 
 - [Gum](https://github.com/charmbracelet/gum)
 
-```bash { bacground=false category=dependency closeTerminalOnSuccess=false excludeFromRunAll=true interactive=true interpreter=bash name=install-dep-gum promptEnv=true terminalRows=10 }
+```bash { background=false category=dependency closeTerminalOnSuccess=false excludeFromRunAll=true interactive=true interpreter=bash name=install-dep-gum promptEnv=true terminalRows=10 }
 go install github.com/charmbracelet/gum@latest
 ```
 
 - [Glow](https://github.com/charmbracelet/glow)
 
-```bash { bacground=false category=dependency closeTerminalOnSuccess=false excludeFromRunAll=true interactive=true interpreter=bash name=install-dep-glow promptEnv=true terminalRows=10 }
+```bash { background=false category=dependency closeTerminalOnSuccess=false excludeFromRunAll=true interactive=true interpreter=bash name=install-dep-glow promptEnv=true terminalRows=10 }
 go install github.com/charmbracelet/glow@latest
 ```
 
 - [Confetty](https://github.com/maaslalani/confetty)
 
-```bash { bacground=false category=dependency closeTerminalOnSuccess=false excludeFromRunAll=true interactive=true interpreter=bash name=install-dep-confetty promptEnv=true terminalRows=10 }
+```bash { background=false category=dependency closeTerminalOnSuccess=false excludeFromRunAll=true interactive=true interpreter=bash name=install-dep-confetty promptEnv=true terminalRows=10 }
 go install github.com/maaslalani/confetty@latest
 ```
 
 - [GitHub Cli](https://github.com/cli/cli)
 
-```bash { bacground=false category=dependency closeTerminalOnSuccess=false excludeFromRunAll=true interactive=true interpreter=bash name=install-dep-github-cli promptEnv=true terminalRows=10 }
+```bash { background=false category=dependency closeTerminalOnSuccess=false excludeFromRunAll=true interactive=true interpreter=bash name=install-dep-github-cli promptEnv=true terminalRows=10 }
 go install github.com/cli/cli/v2/cmd/gh@latest
 ```
 
 - [GitLab Cli](https://gitlab.com/gitlab-org/cli)
 
-```bash { bacground=false category=dependency closeTerminalOnSuccess=false excludeFromRunAll=true interactive=true interpreter=bash name=install-dep-gitlab-cli promptEnv=true terminalRows=10 }
+```bash { background=false category=dependency closeTerminalOnSuccess=false excludeFromRunAll=true interactive=true interpreter=bash name=install-dep-gitlab-cli promptEnv=true terminalRows=10 }
 go install gitlab.com/gitlab-org/cli/cmd/glab@latest
 ```
 
@@ -73,7 +73,7 @@ go install gitlab.com/gitlab-org/cli/cmd/glab@latest
 
 Install or refresh git aliases for the helpers.
 
-```bash { bacground=false category=refresh,git closeTerminalOnSuccess=false excludeFromRunAll=false interactive=true interpreter=bash name=install-git-helpers promptEnv=true terminalRows=10 }
+```bash { background=false category=refresh,git closeTerminalOnSuccess=false excludeFromRunAll=false interactive=true interpreter=bash name=install-git-helpers promptEnv=true terminalRows=10 }
 ./install-git-aliases.sh
 ```
 
@@ -153,7 +153,7 @@ This helper helps with that problem. It's a lot of steps to run by hand over and
 - make sure force pushes are blocked on `main`
 - reset commit history on `master` to 1 commit
     - add new readme with info on the rename and instructions they should run on their local clone
-    - ammend and reword the only commit
+    - amend and reword the only commit
     - goal is to make it very obvious they need to stop using `master` and to start using `main`
     - force push `master`
     - block force pushes on `master` upstream(s)
