@@ -87,6 +87,13 @@ git_config_check_default_branch() {
 		println "${message}"
 		exit 1
 	fi
+
+	if ! git branch --format '%(refname:lstrip=2)' | grep -q "^${default_branch}$"; then
+		println "# ERROR: default branch [${default_branch}] doesn't exist"
+		exit 1
+	else
+		println "# Default branch, ${default_branch}, exists, continuing."
+	fi
 } # git_config_check_default_branch()
 
 git_switch_to_default_branch() {
@@ -110,6 +117,16 @@ celebrate() {
 		kill %1
 	fi
 } # celebrate()
+
+exit_if_zero() {
+	local -i quantity="${1:--}"
+	local message="${2:-# No widgets chosen, exiting...}"
+
+	if [[ ${quantity} -eq 0 ]]; then
+		println "${message}"
+		exit
+	fi
+} # exit_if_zero()
 
 declare -a args=("${@}")
 declare arg

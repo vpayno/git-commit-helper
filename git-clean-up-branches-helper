@@ -26,13 +26,6 @@ main() {
 
 	git_config_check_default_branch
 
-	if ! git branch --format '%(refname:lstrip=2)' | grep -q "^${default_branch}$"; then
-		println "# ERROR: default branch [${default_branch}] doesn't exist"
-		exit 1
-	else
-		println "# Default branch, ${default_branch}, exists, continuing."
-	fi
-
 	git_switch_to_default_branch
 
 	mapfile -t all_remotes < <(git remote | sort -uV)
@@ -50,18 +43,12 @@ main() {
 		printf "\n"
 	fi
 
-	if [[ ${#chosen_remotes[@]} -eq 0 ]]; then
-		println "# No remotes chosen, exiting..."
-		exit
-	fi
+	exit_if_zero ${#chosen_remotes[@]} "# No remotes selected, exiting..."
 
 	while :; do
 		mapfile -t all_branches < <(git branch --format '%(refname:lstrip=2)' --merged | sort -uV | grep -v -E "^${default_branch}$")
 
-		if [[ ${#all_branches[@]} -eq 0 ]]; then
-			println "# No branches found, exiting..."
-			exit
-		fi
+		exit_if_zero ${#all_branches[@]} "# No branches found, exiting..."
 
 		if ${headless_mode}; then
 			chosen_branches=("${all_branches[@]}")
@@ -78,10 +65,7 @@ main() {
 			mapfile -t chosen_branches < <(gum choose --ordered --no-limit --selected="${csv_branches}" "${all_branches[@]}")
 			printf "\n"
 
-			if [[ ${#chosen_branches[@]} -eq 0 ]]; then
-				println "# No branches selected, exiting..."
-				exit
-			fi
+			exit_if_zero ${#chosen_branches[@]} "# No branches selected, exiting..."
 
 			println "## Selected branches:"
 			printf "\t%s\n" "${chosen_branches[@]}"
