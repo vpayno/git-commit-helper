@@ -1,37 +1,16 @@
 #!/usr/bin/env bash
 
-set -e
+# shellcheck source=git-helpers-lib
+source "${HOME}/.git-helpers/git-helpers-lib" || exit
 
-declare GH_PR_DATA_FILE
-declare GL_MR_DATA_FILE
+process_global_args
 
-setup() {
-	GH_PR_DATA_FILE="$(mktemp)"
-	GL_MR_DATA_FILE="$(mktemp)"
-} # setup()
+setup_cr_tmp_files
 
-cleanup() {
+cleanup_on_exit() {
 	[[ -f ${GH_PR_DATA_FILE} ]] && rm -f "${GH_PR_DATA_FILE}"
 	[[ -f ${GL_MR_DATA_FILE} ]] && rm -f "${GL_MR_DATA_FILE}"
-} # cleanup()
-
-# use `trap -l` to show all signal number,name pairs
-trap cleanup EXIT
-
-setup
-
-config() {
-	local -a args=("${@}")
-
-	git config --local "${args[@]}"
-} # config()
-
-println() {
-	gum format --type="markdown" <<-EOF
-		${@}
-	EOF
-	printf "\n"
-} # println()
+} # cleanup_on_exit()
 
 choose_remote_type() {
 	gum choose --limit=1 github gitlab
@@ -110,10 +89,7 @@ get_cr_fetch_path() {
 
 		mapfile -t cr_numbers < <(jq -r '.[].number' "${GH_PR_DATA_FILE}")
 
-		if [[ ${#cr_numbers[@]} -eq 0 ]]; then
-			println "# ERROR: no pull-requests found"
-			exit 1
-		fi
+		exit_if_zero ${#cr_numbers[@]} "# ERROR: no pull-requests found"
 
 		for number in "${cr_numbers[@]}"; do
 			local branch
@@ -141,10 +117,7 @@ get_cr_fetch_path() {
 
 		mapfile -t cr_numbers < <(cut -f1 -d'|' "${GL_MR_DATA_FILE}")
 
-		if [[ ${#cr_numbers[@]} -eq 0 ]]; then
-			println "# ERROR: no pull-requests found"
-			exit 1
-		fi
+		exit_if_zero ${#cr_numbers[@]} "# ERROR: no pull-requests found"
 
 		mapfile -t records < <(cat "${GL_MR_DATA_FILE}")
 
@@ -302,6 +275,7 @@ main() {
 	printf -v author_remote_url "%s:%s/%s" "${author_remote_url_p1}" "${cr_author}" "${author_remote_url_p2}"
 
 	if ! git remote | grep -q -E "\b${cr_author}\b"; then
+		println "# Add CR author's remote"
 		git remote add "${cr_author}" "${author_remote_url}"
 		git remote -v
 	fi

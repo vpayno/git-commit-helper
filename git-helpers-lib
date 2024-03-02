@@ -3,18 +3,36 @@
 
 set -e
 
+# use `trap -l` to show all signal number,name pairs
 trap trap_ctrl_c INT
+trap trap_exit EXIT
 
 trap_ctrl_c() {
 	println "# TRAP: caught Ctrl-C, exiting..."
 	exit
 } # trap_ctrl_c()
 
+trap_exit() {
+	cleanup_on_exit
+} # trap_exit()
+
+cleanup_on_exit() {
+	: "this function should be overriden by the caller"
+} # cleanup_on_exit()
+
 config() {
 	local -a args=("${@}")
 
 	git config --local "${args[@]}"
 } # config()
+
+declare -x GH_PR_DATA_FILE
+declare -x GL_MR_DATA_FILE
+
+setup_cr_tmp_files() {
+	GH_PR_DATA_FILE="$(mktemp)"
+	GL_MR_DATA_FILE="$(mktemp)"
+} # setup_cr_tmp_files()
 
 println() {
 	gum format --type="markdown" <<-EOF
