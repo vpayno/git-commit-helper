@@ -46,14 +46,29 @@ main() {
 	mapfile -t chosen_remotes < <(gum choose --ordered --no-limit --selected="${csv_remotes}" "${all_remotes[@]}")
 	printf "\n"
 
+	if [[ ${#chosen_remotes[@]} -eq 0 ]]; then
+		println "# No remotes chosen, exiting..."
+		exit
+	fi
+
 	while :; do
 		mapfile -t all_branches < <(git branch --format '%(refname:lstrip=2)' | sort -uV | grep -v -E "^${default_branch}$")
+
+		if [[ ${#all_branches[@]} -eq 0 ]]; then
+			println "# No branches found, exiting..."
+			exit
+		fi
 
 		println "# Choose one or more branches to delete:"
 		mapfile -t chosen_branches < <(gum choose --ordered --no-limit --selected="${csv_branches}" "${all_branches[@]}")
 		printf "\n"
 
-		println "## Selected branches:"
+		if [[ ${#chosen_branches[@]} -eq 0 ]]; then
+			println "# No branches selected, exiting..."
+			exit
+		fi
+
+		println "## Selected branches to be deleted:"
 		printf "\t%s\n" "${chosen_branches[@]}"
 		printf "\n"
 
