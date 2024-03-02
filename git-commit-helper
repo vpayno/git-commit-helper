@@ -1,13 +1,9 @@
 #!/usr/bin/env bash
 
-set -e
+# shellcheck source=git-helpers-lib
+source "${HOME}/.git-helpers/git-helpers-lib" || exit
 
-println() {
-	gum format --type="markdown" <<-EOF
-		${@}
-	EOF
-	printf "\n"
-} # println()
+process_global_args
 
 main() {
 	local -a commit_types
@@ -17,34 +13,14 @@ main() {
 	local commit_body
 	local commit_created=false
 
-	# true if no staged changes, false if changes are staged
-	set +e
-	if ! git diff --cached --quiet; then
-		println "# Found the following staged changes:"
-		git status
-		printf "\n"
-	else
-		message="$(
-			cat <<-EOF
-				# ERROR: Can't find staged changes
-
-				You can stage changes with one or more of these commands:
-				\`\`\`text
-				git add --patch
-				git add -u .
-				git add file(s)
-				\`\`\`
-			EOF
-		)"
-		println "${message}"
-		exit 1
-	fi
-	set -e
+	exit_if_no_staged_changes
 
 	println "# Please choose the commit type:"
 	commit_types=("fix" "feat" "docs" "style" "refactor" "test" "chore")
 	commit_type="$(gum choose "${commit_types[@]}")"
 	printf "\n"
+
+	exit_if_zero ${#commit_types[@]} "# No commit types selected, exiting..."
 
 	println "# Please enter the commit scope (optional):"
 	commit_scope="$(gum input --placeholder "scope")"
@@ -109,6 +85,8 @@ main() {
 	fi
 
 	if ${commit_created}; then
+		celebrate
+
 		println "# Showing git commit summary"
 		git show --summary --name-only
 	fi
