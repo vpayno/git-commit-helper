@@ -116,4 +116,4 @@ declare arg
 
 declare -x headless_mode=false
 
-# vim:filetype=bash
+# vim:filetype=sh
