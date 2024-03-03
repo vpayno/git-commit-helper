@@ -2,11 +2,22 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.4] - 2024-03-03
+
+### ⚒  CI
+
+- *(tag-release)* Fix tag/release message
+- *(tag-release)* Gh release fixes
+
 ## [1.0.3] - 2024-03-03
 
 ### ⚒  CI
 
 - *(tag-release)* Add changelog to annotated tags
+
+### Release
+
+- 1.0.3 - add changelog to annotated tags\n\n# Changelog
 
 ## [1.0.2] - 2024-03-03
 
