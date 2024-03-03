@@ -2,12 +2,22 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.3] - 2024-03-03
+
+### ⚒  CI
+
+- *(tag-release)* Add changelog to annotated tags
+
 ## [1.0.2] - 2024-03-03
 
 ### ⚒  CI
 
 - *(tag-release)* Add prompt to automatically push commits and tag
 - *(tag-release)* Add code to create github release
+
+### Release
+
+- 1.0.2 - tag-release creates tags and github releases
 
 ## [1.0.1] - 2024-03-03
 
