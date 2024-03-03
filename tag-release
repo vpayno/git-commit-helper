@@ -49,19 +49,39 @@ git log --pretty=format:'%h -%d %s (%cr) <%an>' --abbrev-commit --decorate "${cu
 printf "\n"
 printf "\n"
 
-printf "Don't forget to push the tag and commits with the following commands:\n"
-printf "\n"
+if gum confirm "Push the staged commits and tag?"; then
 
-if git remote | grep -q "^fork$"; then
-	printf "\tgit push fork %s\n" "${current_branch}"
-	printf "\tgit push --tag fork\n"
-fi
+	if git remote | grep -q "^fork$"; then
+		git push fork "${current_branch}"
+		git push --tag fork
+	fi
 
-if git remote | grep -q "^upstream$"; then
-	printf "\tgit push upstream %s\n" "${current_branch}"
-	printf "\tgit push --tag upstream\n"
+	if git remote | grep -q "^upstream$"; then
+		git push upstream "${current_branch}"
+		git push --tag upstream
 
-elif git remote | grep -q "^origin$"; then
-	printf "\tgit push origin %s\n" "${current_branch}"
-	printf "\tgit push --tag origin\n"
+	elif git remote | grep -q "^origin$"; then
+		git push origin "${current_branch}"
+		git push --tag origin
+	fi
+
+else
+
+	printf "Don't forget to push the tag and commits with the following commands:\n"
+	printf "\n"
+
+	if git remote | grep -q "^fork$"; then
+		printf "\tgit push fork %s\n" "${current_branch}"
+		printf "\tgit push --tag fork\n"
+	fi
+
+	if git remote | grep -q "^upstream$"; then
+		printf "\tgit push upstream %s\n" "${current_branch}"
+		printf "\tgit push --tag upstream\n"
+
+	elif git remote | grep -q "^origin$"; then
+		printf "\tgit push origin %s\n" "${current_branch}"
+		printf "\tgit push --tag origin\n"
+	fi
+
 fi
