@@ -6,8 +6,6 @@ source "${HOME}/.git-helpers/git-helpers-lib" || exit
 process_global_args
 
 main() {
-	local message
-
 	local default_branch
 
 	local -A map
