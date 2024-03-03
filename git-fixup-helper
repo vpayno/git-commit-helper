@@ -1,19 +1,9 @@
 #!/usr/bin/env bash
 
-set -e
+# shellcheck source=git-helpers-lib
+source "${HOME}/.git-helpers/git-helpers-lib" || exit
 
-config() {
-	local -a args=("${@}")
-
-	git config --local "${args[@]}"
-} # config()
-
-println() {
-	gum format --type="markdown" <<-EOF
-		${@}
-	EOF
-	printf "\n"
-} # println()
+process_global_args
 
 main() {
 	local default_branch
@@ -29,54 +19,9 @@ main() {
 	local commit_selector
 	local rebase_target
 
-	# true if no staged changes, false if changes are staged
-	set +e
-	if ! git diff --cached --quiet; then
-		println "# Found the following staged changes:"
-		git status
-		printf "\n"
-	else
-		message="$(
-			cat <<-EOF
-				# ERROR: Can't find staged changes
+	exit_if_no_staged_changes
 
-				You can stage changes with one or more of these commands:
-				\`\`\`text
-				git add --patch
-				git add -u .
-				git add file(s)
-				\`\`\`
-			EOF
-		)"
-		println "${message}"
-		exit 1
-	fi
-	set -e
-
-	if config misc.default-branch >&/dev/null; then
-		default_branch="$(config --get misc.default-branch)"
-	else
-		message="$(
-			cat <<-EOF
-				# ERROR: Default Branch Not Found
-				Set the default branch with the command
-				\`\`\`text
-				git config --local misc.default-branch main
-				\`\`\`
-
-				use \`main\`, \`master\`, \`develop\`, etc - it needs to be a real branch and the project's default branch
-			EOF
-		)"
-		println "${message}"
-		exit 1
-	fi
-
-	if ! git branch --format '%(refname:lstrip=2)' | grep -q "^${default_branch}$"; then
-		println "# ERROR: branch [${default_branch}] doesn't exist"
-		exit 1
-	else
-		println "# Default branch, ${default_branch}, exists, continuing."
-	fi
+	git_config_check_default_branch
 
 	current_origin="$(git rev-parse --abbrev-ref --symbolic-full-name "@{u}" | cut -f1 -d'/')"
 	current_branch="$(git branch --show-current)"
