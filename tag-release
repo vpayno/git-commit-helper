@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+
+declare tag_version="${1}"
+declare tag_note="${2}"
+
+if [[ ! ${tag_version} =~ ^[0-9]+[.][0-9]+[.][0-9]+([.][0-9]+)?$ ]]; then
+	printf "ERROR: tag [%s] doesn't match the regex [%s]\n" "${tag_version}" '^[0-9]+[.][0-9]+[.][0-9]+([.][0-9]+)?$'
+	exit 1
+fi
+
+if git tag | grep -E "^${tag_version}$"; then
+	printf "ERROR: tag [%s] already exits\n" "${tag_version}"
+	exit 1
+fi
+
+if [[ -z ${tag_note} ]]; then
+	printf "ERROR: tag note/comment is empty\n"
+	exit 1
+fi
+
+declare tag_message="release: ${tag_version} - ${tag_note}"
+
+echo Running: git-cliff --tag "${tag_version}"
+git-cliff --tag "${tag_version}" >CHANGE_LOG.md
+printf "\n"
+
+git add CHANGE_LOG.md
+git commit -m "${tag_message}"
+printf "\n"
+
+echo Running: git tag -a "${tag_version}" -m "${tag_message}"
+git tag -a "${tag_version}" -m "${tag_message}"
+printf "\n"
+
+echo Running: git show "${tag_version}"
+git show "${tag_version}"
+printf "\n"
+
+printf "Don't forget to push the tag and commits with the following commands:\n"
+printf "\n"
+
+if git remote | grep -q "^fork$"; then
+	printf "\tgit push fork\n"
+	printf "\tgit push --tag fork\n"
+fi
+
+if git remote | grep -q "^upstream$"; then
+	printf "\tgit push upstream\n"
+	printf "\tgit push --tag upstream\n"
+
+elif git remote | grep -q "^origin$"; then
+	printf "\tgit push origin\n"
+	printf "\tgit push --tag origin\n"
+fi
