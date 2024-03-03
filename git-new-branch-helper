@@ -1,19 +1,9 @@
 #!/usr/bin/env bash
 
-set -e
+# shellcheck source=git-helpers-lib
+source "${HOME}/.git-helpers/git-helpers-lib" || exit
 
-config() {
-	local -a args=("${@}")
-
-	git config --local "${args[@]}"
-} # config()
-
-println() {
-	gum format --type="markdown" <<-EOF
-		${@}
-	EOF
-	printf "\n"
-} # println()
+process_global_args
 
 main() {
 	local default_branch
@@ -32,82 +22,11 @@ main() {
 	source_branch="$(git branch --show-current)"
 	current_remote="$(git rev-parse --abbrev-ref --symbolic-full-name "@{u}" | cut -f1 -d'/')"
 
-	if config misc.default-branch >&/dev/null; then
-		default_branch="$(config --get misc.default-branch)"
-	else
-		message="$(
-			cat <<-EOF
-				# ERROR: Default Branch Not Found
-				Set the default branch with the command
-				\`\`\`text
-				git config --local misc.default-branch main
-				\`\`\`
+	git_config_check_default_branch
 
-				use \`main\`, \`master\`, \`develop\`, etc - it needs to be a real branch and the project's default branch
-			EOF
-		)"
-		println "${message}"
-		exit 1
-	fi
+	git_config_check_upstream_remote
 
-	if ! git branch --format '%(refname:lstrip=2)' | grep -q "^${default_branch}$"; then
-		println "# ERROR: default branch [${default_branch}] doesn't exist"
-		exit 1
-	else
-		println "# Default branch, ${default_branch}, exists, continuing."
-	fi
-
-	if config misc.remote-upstream >&/dev/null; then
-		remote_upstream="$(config --get misc.remote-upstream)"
-	else
-		message="$(
-			cat <<-EOF
-				# ERROR: Remote Upstream Not Found
-				Set the default upstream remote with the command
-				\`\`\`text
-				git config --local misc.remote-upstream ${current_remote}
-				\`\`\`
-
-				Use \`origin\`, \`upstream\`, \`github\`, \`gitlab\`, etc.
-				It needs to be a remote returned by \`git remote -v\`.
-			EOF
-		)"
-		println "${message}"
-		exit 1
-	fi
-
-	if ! git remote --verbose | awk '{ print $1 }' | sort -uV | grep -q "^${remote_upstream}$"; then
-		println "# ERROR: remote upstream [${remote_upstream}] doesn't exist"
-		exit 1
-	else
-		println "# Remote upstream, ${remote_upstream}, exists, continuing."
-	fi
-
-	if config misc.remote-fork >&/dev/null; then
-		remote_fork="$(config --get misc.remote-fork)"
-	else
-		message="$(
-			cat <<-EOF
-				# ERROR: Remote Upstream Not Found
-				Set the default fork remote with the command
-				\`\`\`text
-				git config --local misc.remote-fork ${current_remote}
-				\`\`\`
-
-				Use \`fork\`, \`${USER}\`, etc.
-				It needs to be a remote returned by \`git remote -v\`.
-			EOF
-		)"
-		println "${message}"
-		exit 1
-	fi
-
-	if ! git remote --verbose | awk '{ print $1 }' | sort -uV | grep -q "^${remote_fork}$"; then
-		println "# ERROR: remote fork [${remote_fork}] doesn't exist"
-		exit 1
-	else
-		println "# Remote fork, ${remote_fork}, exists, continuing."
-	fi
+	git_config_check_fork_remote
 
 	repo_main_path="$(git rev-parse --show-toplevel)"
 
