@@ -18,7 +18,8 @@ if [[ -z ${tag_note} ]]; then
 	exit 1
 fi
 
-declare tag_message="release: ${tag_version} - ${tag_note}"
+declare tag_message
+tag_message="release: ${tag_version} - ${tag_note}\n\n$(git-cliff --latest --tag "${tag_version}")"
 
 echo Running: git-cliff --tag "${tag_version}"
 git-cliff --tag "${tag_version}" >CHANGE_LOG.md
