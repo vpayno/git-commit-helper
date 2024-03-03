@@ -168,7 +168,7 @@ The `./tag-release` script is used to
 
 Use this Runme playbook to list the latest 10 releases:
 
-```bash { background=false category=release closeTerminalOnSuccess=false excludeFromRunAll=false interactive=true interpreter=bash name=releases-list promptEnv=true terminalRows=10 }
+```bash { background=false category=release closeTerminalOnSuccess=false excludeFromRunAll=true interactive=true interpreter=bash name=releases-list promptEnv=true terminalRows=10 }
 printf "\n"
 printf "Latest releases:\n"
 printf "\n"
@@ -178,7 +178,7 @@ printf "\n"
 
 Use this Runme playbook to list the unreleased commits:
 
-```bash { background=false category=release closeTerminalOnSuccess=false excludeFromRunAll=false interactive=true interpreter=bash name=releases-unreleased-commits promptEnv=true terminalRows=10 }
+```bash { background=false category=release closeTerminalOnSuccess=false excludeFromRunAll=true interactive=true interpreter=bash name=releases-unreleased-commits promptEnv=true terminalRows=10 }
 printf "\n"
 printf "Unreleased commits since %s:\n" "$(git tag --list -n0 | tail -n1)"
 printf "\n"
@@ -188,7 +188,7 @@ printf "\n"
 
 Use this Runme playbook to tag a new release.
 
-```bash { background=false category=release closeTerminalOnSuccess=false excludeFromRunAll=false interactive=true interpreter=bash name=release-create promptEnv=true terminalRows=10 }
+```bash { background=false category=release closeTerminalOnSuccess=false excludeFromRunAll=true interactive=true interpreter=bash name=release-create promptEnv=true terminalRows=20 }
 export TAG_VER="x.y.z"
 export TAG_TITLE="short description"
 
