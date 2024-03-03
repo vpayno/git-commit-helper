@@ -18,11 +18,11 @@ if [[ -z ${tag_note} ]]; then
 	exit 1
 fi
 
-declare tag_message
-read -r -d '' tag_message <<-EOF
-	release: ${tag_version} - ${tag_note}
+declare tag_message="release: ${tag_version} - ${tag_note}"
 
-	$(git-cliff --latest --tag "${tag_version}")
+declare release_message
+read -r -d '' release_message <<-EOF
+	$(git-cliff --unreleased --tag "${tag_version}")
 EOF
 
 echo Running: git-cliff --tag "${tag_version}"
@@ -70,8 +70,8 @@ if gum confirm "Push the staged commits and tag?"; then
 		git push --tag origin
 	fi
 
-	echo Running: gh release create "${tag_version}" --notes "$(git-cliff --latest)"
-	gh release create "${tag_version}" --notes "$(git-cliff --latest)"
+	echo Running: gh release create "${tag_version}" --title "${tag_version}" --notes "${release_message}"
+	gh release create "${tag_version}" --title "${tag_version}" --notes "${release_message}"
 	printf "\n"
 
 else
@@ -94,6 +94,6 @@ else
 	fi
 
 	printf "\n"
-	printf "\tgh release create %s --notes \"\$(%s)\"\n" "${tag_version}" "git-cliff --latest"
+	printf "\tgh release create %s --title %s --notes \"\$(git-cliff --unreleased --tag %s)\"\n" "${tag_version}" "${tag_version}" "${tag_version}"
 	printf "\n"
 fi
