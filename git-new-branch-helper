@@ -15,6 +15,7 @@ main() {
 	local repo_main_path
 	local worktree_path_prefix
 	local worktree_path
+	local use_worktree=false
 
 	local source_branch
 	local current_remote
@@ -27,6 +28,12 @@ main() {
 	git_config_check_upstream_remote
 
 	git_config_check_fork_remote
+
+	if gum confirm "Use create a worktree for the branch?"; then
+		use_worktree=true
+	else
+		println "Skipping use of git worktrees"
+	fi
 
 	repo_main_path="$(git rev-parse --show-toplevel)"
 
@@ -47,19 +54,24 @@ main() {
 	done
 	printf "\n"
 
-	worktree_path_prefix="${repo_main_path}-cr-"
-	worktree_path="${worktree_path_prefix}${new_branch_name}"
-
 	println "# Creating branch: ${new_branch_name}"
-	println "# Creating worktree: ${worktree_path}"
-	printf "\n"
 
-	git worktree add --track -B "${new_branch_name}" "${worktree_path}"
-	printf "\n"
+	if ${use_worktree}; then
+		worktree_path_prefix="${repo_main_path}-cr-"
+		worktree_path="${worktree_path_prefix}${new_branch_name}"
 
-	println "# Available worktrees:"
-	git worktree list
-	printf "\n"
+		println "# Creating worktree: ${worktree_path}"
+		printf "\n"
+
+		git worktree add --track -B "${new_branch_name}" "${worktree_path}"
+		printf "\n"
+
+		println "# Available worktrees:"
+		git worktree list
+		printf "\n"
+	else
+		git switch -C "${new_branch_name}"
+	fi
 
 	message="$(
 		cat <<-EOF
@@ -97,11 +109,19 @@ main() {
 			pushd "${repo_main_path}"
 
 			git branch --show-current
+		EOF
 
-			git worktree list
+		if ${use_worktree}; then
+			cat <<-EOF
 
-			git worktree remove "${worktree_path}"
+				git worktree list
 
+				git worktree remove "${worktree_path}"
+
+			EOF
+		fi
+
+		cat <<-EOF
 			git branch --delete ${new_branch_name}
 
 			git push ${current_remote} --delete ${new_branch_name}
