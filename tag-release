@@ -70,9 +70,17 @@ if gum confirm "Push the staged commits and tag?"; then
 		git push --tag origin
 	fi
 
-	echo Running: gh release create "${tag_version}" --title "${tag_version}" --notes "${release_message}"
-	gh release create "${tag_version}" --title "${tag_version}" --notes "${release_message}"
-	printf "\n"
+	if git remote get-url --push --all origin | grep -q -E '^git@github[.]'; then
+		echo Running: gh release create "${tag_version}" --title "${tag_version}" --notes \""${release_message}"\"
+		gh release create "${tag_version}" --title "${tag_version}" --notes "${release_message}"
+		printf "\n"
+	fi
+
+	if git remote get-url --push --all origin | grep -q -E '^git@gitlab[.]'; then
+		echo Running: gh release create "${tag_version}" --title "${tag_version}" --notes \""${release_message}"\"
+		glab release create "${tag_version}" --name "${tag_version}" --notes "${release_message}"
+		printf "\n"
+	fi
 
 else
 
@@ -92,8 +100,15 @@ else
 		printf "\tgit push origin %s\n" "${current_branch}"
 		printf "\tgit push --tag origin\n"
 	fi
+	printf "\n"
 
-	printf "\n"
-	printf "\tgh release create %s --title %s --notes \"\$(git-cliff --latest)\"\n" "${tag_version}" "${tag_version}"
-	printf "\n"
+	if git remote get-url --push --all origin | grep -q -E '^git@github[.]'; then
+		printf "\tgh release create %s --title %s --notes \"\$(git-cliff --latest)\"\n" "${tag_version}" "${tag_version}"
+		printf "\n"
+	fi
+
+	if git remote get-url --push --all origin | grep -q -E '^git@gitlab[.]'; then
+		printf "\tglab release create %s --name %s --notes \"\$(git-cliff --latest)\"" "${tag_version}" "${tag_version}"
+		printf "\n"
+	fi
 fi
