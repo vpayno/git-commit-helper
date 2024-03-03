@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.7] - 2024-03-03
+
+### Ocs
+
+- Don't include release-* playbook steps in runall
+
 ## [1.0.6] - 2024-03-03
 
 ### 📚 Documentation
@@ -13,6 +19,10 @@ All notable changes to this project will be documented in this file.
 ### ⚙️ Miscellaneous Tasks
 
 - Rename CHANGE_LOG.md to CHANGELOG.md
+
+### Release
+
+- 1.0.6 - add releases-unreleased-commits runme task
 
 ## [1.0.5] - 2024-03-03
 
