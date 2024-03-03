@@ -2,12 +2,24 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.5] - 2024-03-03
+
+### ⚒  CI
+
+- *(tag-release)* Fix gh release command recommendation
+- *(tag-release)* Add gitlab release creation
+- *(tag-release)* Strip header from change log in release notes
+
 ## [1.0.4] - 2024-03-03
 
 ### ⚒  CI
 
 - *(tag-release)* Fix tag/release message
 - *(tag-release)* Gh release fixes
+
+### Release
+
+- 1.0.4 - gh release fixes
 
 ## [1.0.3] - 2024-03-03
 
