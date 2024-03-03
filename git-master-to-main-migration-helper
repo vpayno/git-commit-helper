@@ -1,19 +1,9 @@
 #!/usr/bin/env bash
 
-set -e
+# shellcheck source=git-helpers-lib
+source "${HOME}/.git-helpers/git-helpers-lib" || exit
 
-config() {
-	local -a args=("${@}")
-
-	git config --local "${args[@]}"
-} # config()
-
-println() {
-	gum format --type="markdown" <<-EOF
-		${@}
-	EOF
-	printf "\n"
-} # println()
+process_global_args
 
 choose_remote_type() {
 	gum choose --limit=1 github gitlab
@@ -49,10 +39,6 @@ main() {
 
 	local -i commit_count
 
-	local current_remote
-
-	current_remote="$(git rev-parse --abbrev-ref --symbolic-full-name "@{u}" | cut -f1 -d'/')"
-
 	if git rev-parse --verify main; then
 		println "# This repo already has a main branch"
 		exit
@@ -63,57 +49,9 @@ main() {
 		exit
 	fi
 
-	if config misc.remote-upstream >&/dev/null; then
-		remote_upstream="$(config --get misc.remote-upstream)"
-	else
-		message="$(
-			cat <<-EOF
-				# ERROR: Remote Upstream Not Found
-				Set the default upstream remote with the command
-				\`\`\`text
-				git config --local misc.remote-upstream ${current_remote}
-				\`\`\`
+	git_config_check_upstream_remote
 
-				Use \`origin\`, \`upstream\`, \`github\`, \`gitlab\`, etc.
-				It needs to be a remote returned by \`git remote -v\`.
-			EOF
-		)"
-		println "${message}"
-		exit 1
-	fi
-
-	if ! git remote --verbose | awk '{ print $1 }' | sort -uV | grep -q "^${remote_upstream}$"; then
-		println "# ERROR: remote upstream [${remote_upstream}] doesn't exist"
-		exit 1
-	else
-		println "# Remote upstream, ${remote_upstream}, exists, continuing."
-	fi
-
-	if config misc.remote-fork >&/dev/null; then
-		remote_fork="$(config --get misc.remote-fork)"
-	else
-		message="$(
-			cat <<-EOF
-				# ERROR: Remote Upstream Not Found
-				Set the default fork remote with the command
-				\`\`\`text
-				git config --local misc.remote-fork ${current_remote}
-				\`\`\`
-
-				Use \`fork\`, \`${USER}\`, etc.
-				It needs to be a remote returned by \`git remote -v\`.
-			EOF
-		)"
-		println "${message}"
-		exit 1
-	fi
-
-	if ! git remote --verbose | awk '{ print $1 }' | sort -uV | grep -q "^${remote_fork}$"; then
-		println "# ERROR: remote fork [${remote_fork}] doesn't exist"
-		exit 1
-	else
-		println "# Remote fork, ${remote_fork}, exists, continuing."
-	fi
+	git_config_check_fork_remote
 
 	if ! gum confirm "# Continue with master to main branch migration?"; then
 		exit

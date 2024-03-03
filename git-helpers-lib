@@ -114,6 +114,66 @@ git_config_check_default_branch() {
 	fi
 } # git_config_check_default_branch()
 
+git_config_check_upstream_remote() {
+	local current_remote
+
+	current_remote="$(git rev-parse --abbrev-ref --symbolic-full-name "@{u}" | cut -f1 -d'/')"
+
+	if config misc.remote-upstream >&/dev/null; then
+		remote_upstream="$(config --get misc.remote-upstream)"
+	else
+		message="$(
+			cat <<-EOF
+				# ERROR: Remote Upstream Not Found
+				Set the default upstream remote with the command
+				\`\`\`text
+				git config --local misc.remote-upstream ${current_remote}
+				\`\`\`
+
+				Use \`origin\`, \`upstream\`, \`github\`, \`gitlab\`, etc.
+				It needs to be a remote returned by \`git remote -v\`.
+			EOF
+		)"
+		println "${message}"
+		exit 1
+	fi
+
+	if ! git remote --verbose | awk '{ print $1 }' | sort -uV | grep -q "^${remote_upstream}$"; then
+		println "# ERROR: remote upstream [${remote_upstream}] doesn't exist"
+		exit 1
+	else
+		println "# Remote upstream, ${remote_upstream}, exists, continuing."
+	fi
+} # git_config_check_upstream_remote()
+
+git_config_check_fork_remote() {
+	if config misc.remote-fork >&/dev/null; then
+		remote_fork="$(config --get misc.remote-fork)"
+	else
+		message="$(
+			cat <<-EOF
+				# ERROR: Remote Upstream Not Found
+				Set the default fork remote with the command
+				\`\`\`text
+				git config --local misc.remote-fork fork
+				\`\`\`
+
+				Use \`fork\`, \`${USER}\`, etc.
+				It needs to be a remote returned by \`git remote -v\`.
+			EOF
+		)"
+		println "${message}"
+		exit 1
+	fi
+
+	if ! git remote --verbose | awk '{ print $1 }' | sort -uV | grep -q "^${remote_fork}$"; then
+		println "# ERROR: remote fork [${remote_fork}] doesn't exist"
+		exit 1
+	else
+		println "# Remote fork, ${remote_fork}, exists, continuing."
+	fi
+} # git_config_check_fork_remote()
+
 git_switch_to_default_branch() {
 	local current_branch
 
