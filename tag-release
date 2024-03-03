@@ -39,16 +39,20 @@ printf "\n"
 printf "Don't forget to push the tag and commits with the following commands:\n"
 printf "\n"
 
+declare current_branch
+
+current_branch="$(git branch --show-current)"
+
 if git remote | grep -q "^fork$"; then
-	printf "\tgit push fork\n"
+	printf "\tgit push fork %s\n" "${current_branch}"
 	printf "\tgit push --tag fork\n"
 fi
 
 if git remote | grep -q "^upstream$"; then
-	printf "\tgit push upstream\n"
+	printf "\tgit push upstream %s\n" "${current_branch}"
 	printf "\tgit push --tag upstream\n"
 
 elif git remote | grep -q "^origin$"; then
-	printf "\tgit push origin\n"
+	printf "\tgit push origin %s\n" "${current_branch}"
 	printf "\tgit push --tag origin\n"
 fi
