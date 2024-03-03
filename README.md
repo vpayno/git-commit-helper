@@ -157,3 +157,29 @@ This helper helps with that problem. It's a lot of steps to run by hand over and
     - goal is to make it very obvious they need to stop using `master` and to start using `main`
     - force push `master`
     - block force pushes on `master` upstream(s)
+
+## Releases
+
+The `./tag-release` script is used to
+
+- update the [CHANGELOG](./CHANGELOG.md)
+- create an annotated tag
+- create a GitHub and/or GitLab release
+
+Use this Runme playbook to list the latest 10 releases:
+
+```bash { background=false category=release closeTerminalOnSuccess=false excludeFromRunAll=false interactive=true interpreter=bash name=releases-list promptEnv=true terminalRows=10 }
+printf "\n"
+printf "Latest releases:\n"
+git tag --list -n1 | tail
+printf "\n"
+```
+
+Use this Runme playbook to tag a new release.
+
+```bash { background=false category=release closeTerminalOnSuccess=false excludeFromRunAll=false interactive=true interpreter=bash name=release-create promptEnv=true terminalRows=10 }
+export TAG_VER="x.y.z"
+export TAG_TITLE="short description"
+
+./tag-release "${TAG_VER}" "${TAG_TITLE}"
+```
