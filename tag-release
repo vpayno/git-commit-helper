@@ -22,7 +22,7 @@ declare tag_message="release: ${tag_version} - ${tag_note}"
 
 declare release_message
 read -r -d '' release_message <<-EOF
-	$(git-cliff --unreleased --tag "${tag_version}")
+	$(git-cliff --strip header --unreleased --tag "${tag_version}")
 EOF
 
 echo Running: git-cliff --tag "${tag_version}"
@@ -103,12 +103,12 @@ else
 	printf "\n"
 
 	if git remote get-url --push --all origin | grep -q -E '^git@github[.]'; then
-		printf "\tgh release create %s --title %s --notes \"\$(git-cliff --latest)\"\n" "${tag_version}" "${tag_version}"
+		printf "\tgh release create %s --title %s --notes \"\$(git-cliff --strip header --latest)\"\n" "${tag_version}" "${tag_version}"
 		printf "\n"
 	fi
 
 	if git remote get-url --push --all origin | grep -q -E '^git@gitlab[.]'; then
-		printf "\tglab release create %s --name %s --notes \"\$(git-cliff --latest)\"" "${tag_version}" "${tag_version}"
+		printf "\tglab release create %s --name %s --notes \"\$(git-cliff --strip header --latest)\"" "${tag_version}" "${tag_version}"
 		printf "\n"
 	fi
 fi
