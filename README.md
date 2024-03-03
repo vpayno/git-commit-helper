@@ -192,5 +192,6 @@ Use this Runme playbook to tag a new release.
 export TAG_VER="x.y.z"
 export TAG_TITLE="short description"
 
+reset
 ./tag-release "${TAG_VER}" "${TAG_TITLE}"
 ```
