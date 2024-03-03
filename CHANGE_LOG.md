@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.2] - 2024-03-03
+
+### ⚒  CI
+
+- *(tag-release)* Add prompt to automatically push commits and tag
+- *(tag-release)* Add code to create github release
+
 ## [1.0.1] - 2024-03-03
 
 ### 🐛 Bug Fixes
@@ -13,6 +20,10 @@ All notable changes to this project will be documented in this file.
 
 - Add tag-release script
 - Split chore/ci categories
+
+### Release
+
+- 1.0.1 - add tag-release script
 
 ## [1.0.0] - 2024-03-03
 
