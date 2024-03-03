@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.6] - 2024-03-03
+
+### 📚 Documentation
+
+- Spell check readme
+- Add runme playbook tasks for listing and creating releases
+- Add runme playbook step to show unreleased commits
+
+### ⚙️ Miscellaneous Tasks
+
+- Rename CHANGE_LOG.md to CHANGELOG.md
+
 ## [1.0.5] - 2024-03-03
 
 ### ⚒  CI
@@ -9,6 +21,10 @@ All notable changes to this project will be documented in this file.
 - *(tag-release)* Fix gh release command recommendation
 - *(tag-release)* Add gitlab release creation
 - *(tag-release)* Strip header from change log in release notes
+
+### Release
+
+- 1.0.5 - add github and gitlab release creation
 
 ## [1.0.4] - 2024-03-03
 
