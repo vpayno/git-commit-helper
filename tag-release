@@ -65,6 +65,10 @@ if gum confirm "Push the staged commits and tag?"; then
 		git push --tag origin
 	fi
 
+	echo Running: gh release create "${tag_version}" --notes "$(git-cliff --latest --tag "${tag_version}")"
+	gh release create "${tag_version}" --notes "$(git-cliff --latest --tag "${tag_version}")"
+	printf "\n"
+
 else
 
 	printf "Don't forget to push the tag and commits with the following commands:\n"
@@ -84,4 +88,7 @@ else
 		printf "\tgit push --tag origin\n"
 	fi
 
+	printf "\n"
+	printf "\tgh release create %s --notes \"\$(%s)\"\n" "${tag_version}" "git-cliff --latest --tag ${tag_version}"
+	printf "\n"
 fi
