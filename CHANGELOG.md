@@ -2,11 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.8] - 2024-03-03
+
+### 🐛 Bug Fixes
+
+- *(git-new-branch-helper)* Make git worktrees optional
+
 ## [1.0.7] - 2024-03-03
 
 ### Ocs
 
 - Don't include release-* playbook steps in runall
+
+### Release
+
+- 1.0.7 - fix release-create
 
 ## [1.0.6] - 2024-03-03
 
