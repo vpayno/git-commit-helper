@@ -36,12 +36,21 @@ echo Running: git show "${tag_version}"
 git show "${tag_version}"
 printf "\n"
 
-printf "Don't forget to push the tag and commits with the following commands:\n"
+declare current_branch
+current_branch="$(git branch --show-current)"
+
+declare current_remote
+current_remote="$(git rev-parse --abbrev-ref --symbolic-full-name "@{u}" | cut -f1 -d'/')"
+
+printf "\n"
+printf "Staged commits:\n"
+printf "\n"
+git log --pretty=format:'%h -%d %s (%cr) <%an>' --abbrev-commit --decorate "${current_remote}/${current_branch}"..
+printf "\n"
 printf "\n"
 
-declare current_branch
-
-current_branch="$(git branch --show-current)"
+printf "Don't forget to push the tag and commits with the following commands:\n"
+printf "\n"
 
 if git remote | grep -q "^fork$"; then
 	printf "\tgit push fork %s\n" "${current_branch}"
