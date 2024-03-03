@@ -26,10 +26,10 @@ read -r -d '' release_message <<-EOF
 EOF
 
 echo Running: git-cliff --tag "${tag_version}"
-git-cliff --tag "${tag_version}" >CHANGE_LOG.md
+git-cliff --tag "${tag_version}" >CHANGELOG.md
 printf "\n"
 
-git add CHANGE_LOG.md
+git add CHANGELOG.md
 git commit -m "${tag_message}"
 printf "\n"
 
