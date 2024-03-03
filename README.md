@@ -144,7 +144,7 @@ Used to simplify the process of checking out a change review (CR) branch from Gi
 
 ### git-master-to-main-migration-helper
 
-I hate it when someone renames the `master` branch to `main` without taking care that other developers don't just repush the `master` branch and keep working with it.
+I hate it when someone renames the `master` branch to `main` without taking care that other developers don't just re-push the `master` branch and keep working with it.
 
 This helper helps with that problem. It's a lot of steps to run by hand over and over again so this is a perfect task for automation.
 
