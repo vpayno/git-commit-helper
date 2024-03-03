@@ -171,7 +171,18 @@ Use this Runme playbook to list the latest 10 releases:
 ```bash { background=false category=release closeTerminalOnSuccess=false excludeFromRunAll=false interactive=true interpreter=bash name=releases-list promptEnv=true terminalRows=10 }
 printf "\n"
 printf "Latest releases:\n"
+printf "\n"
 git tag --list -n1 | tail
+printf "\n"
+```
+
+Use this Runme playbook to list the unreleased commits:
+
+```bash { background=false category=release closeTerminalOnSuccess=false excludeFromRunAll=false interactive=true interpreter=bash name=releases-unreleased-commits promptEnv=true terminalRows=10 }
+printf "\n"
+printf "Unreleased commits since %s:\n" "$(git tag --list -n0 | tail -n1)"
+printf "\n"
+git log --pretty=format:'%h -%d %s (%cr) <%an>' --abbrev-commit --decorate "$(git tag --list -n0 | tail -n1)"..
 printf "\n"
 ```
 
