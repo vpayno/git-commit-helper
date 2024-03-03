@@ -94,6 +94,6 @@ else
 	fi
 
 	printf "\n"
-	printf "\tgh release create %s --title %s --notes \"\$(git-cliff --unreleased --tag %s)\"\n" "${tag_version}" "${tag_version}" "${tag_version}"
+	printf "\tgh release create %s --title %s --notes \"\$(git-cliff --latest)\"\n" "${tag_version}" "${tag_version}"
 	printf "\n"
 fi
