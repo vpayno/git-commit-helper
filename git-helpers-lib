@@ -82,9 +82,9 @@ git_guess_default_branch() {
 		printf "master"
 	elif git branch --format '%(refname:lstrip=2)' --all | grep -q "^devel$"; then
 		printf "devel"
+	else
+		printf "main"
 	fi
-
-	printf "main"
 } # git_guess_default_branch()
 
 git_config_check_default_branch() {
