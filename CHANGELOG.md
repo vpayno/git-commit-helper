@@ -2,11 +2,31 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.9] - 2024-03-05
+
+### 🐛 Bug Fixes
+
+- *(install-git-aliases)* Add verbosity to script
+- *(git-helpers-lib)* Move default branch guess to else branch in git_guess_default_branch()
+
+### 📚 Documentation
+
+- Reset terminal before running tag-release in release-create step
+- Move Releases section before Helpers section
+
+### ⚙️ Miscellaneous Tasks
+
+- Add a checkout refresh script
+
 ## [1.0.8] - 2024-03-03
 
 ### 🐛 Bug Fixes
 
 - *(git-new-branch-helper)* Make git worktrees optional
+
+### Release
+
+- 1.0.8 - make worktrees optional when creating a new branch
 
 ## [1.0.7] - 2024-03-03
 
