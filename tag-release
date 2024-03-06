@@ -3,6 +3,10 @@
 declare tag_version="${1}"
 declare tag_note="${2}"
 
+git_lg() {
+	git log --pretty=format:'%h -%d %s (%cr) <%an>' --abbrev-commit --decorate "${@}"
+} # git_lg()
+
 if [[ ! ${tag_version} =~ ^[0-9]+[.][0-9]+[.][0-9]+([.][0-9]+)?$ ]]; then
 	printf "ERROR: tag [%s] doesn't match the regex [%s]\n" "${tag_version}" '^[0-9]+[.][0-9]+[.][0-9]+([.][0-9]+)?$'
 	exit 1
@@ -34,13 +38,13 @@ declare -i unreleased_commit_count=0
 # Can't reliably use wc because the last log line doesn't end with a new line.
 # So 0 and 1 commits are indistinguishable from each other.
 # format: ^6e5f52e - (HEAD -> main) ci(tag-release): abort when no unreleased commits are found (3 minutes ago) <Victor Payno>$
-unreleased_commit_count="$(git log --pretty=format:'%h -%d %s (%cr) <%an>' --abbrev-commit --decorate "${previous_tag}".. | grep -c -E '[a-z0-9]+\s+-')"
+unreleased_commit_count="$(git_lg "${previous_tag}".. | grep -c -E '[a-z0-9]+\s+-')"
 
 if [[ ${unreleased_commit_count} -eq 0 ]]; then
 	printf "\n"
 	printf "ERROR: No unreleased commits found since the last tag, %s\n" "${previous_tag}"
 	printf "\n"
-	git log --pretty=format:'%h -%d %s (%cr) <%an>' --abbrev-commit --decorate -n 5
+	git_lg -n 5
 	printf "\n\n"
 	exit 1
 fi
@@ -50,7 +54,7 @@ printf "%s\n" "${tag_message}"
 printf "\n"
 printf "Unreleased commits:\n"
 printf "\n"
-git log --pretty=format:'%h -%d %s (%cr) <%an>' --abbrev-commit --decorate "${previous_tag}"..
+git_lg "${previous_tag}"..
 printf "\n"
 
 gum confirm "Are you sure you want to tag and release?" || exit
@@ -79,7 +83,7 @@ printf "\n"
 printf "\n"
 printf "Staged commits:\n"
 printf "\n"
-git log --pretty=format:'%h -%d %s (%cr) <%an>' --abbrev-commit --decorate "${current_remote}/${current_branch}"..
+git_lg "${current_remote}/${current_branch}"..
 printf "\n"
 printf "\n"
 
