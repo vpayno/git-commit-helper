@@ -20,6 +20,41 @@ fi
 
 declare tag_message="release: ${tag_version} - ${tag_note}"
 
+declare current_branch
+current_branch="$(git branch --show-current)"
+
+declare current_remote
+current_remote="$(git rev-parse --abbrev-ref --symbolic-full-name "@{u}" | cut -f1 -d'/')"
+
+declare previous_tag
+previous_tag="$(git tag --list -n0 | tail -n1)"
+
+declare -i unreleased_commit_count=0
+
+# Can't reliably use wc because the last log line doesn't end with a new line.
+# So 0 and 1 commits are indistinguishable from each other.
+# format: ^6e5f52e - (HEAD -> main) ci(tag-release): abort when no unreleased commits are found (3 minutes ago) <Victor Payno>$
+unreleased_commit_count="$(git log --pretty=format:'%h -%d %s (%cr) <%an>' --abbrev-commit --decorate "${previous_tag}".. | grep -c -E '[a-z0-9]+\s+-')"
+
+if [[ ${unreleased_commit_count} -eq 0 ]]; then
+	printf "\n"
+	printf "ERROR: No unreleased commits found since the last tag, %s\n" "${previous_tag}"
+	printf "\n"
+	git log --pretty=format:'%h -%d %s (%cr) <%an>' --abbrev-commit --decorate -n 5
+	printf "\n\n"
+	exit 1
+fi
+
+printf "\n"
+printf "%s\n" "${tag_message}"
+printf "\n"
+printf "Unreleased commits:\n"
+printf "\n"
+git log --pretty=format:'%h -%d %s (%cr) <%an>' --abbrev-commit --decorate "${previous_tag}"..
+printf "\n"
+
+gum confirm "Are you sure you want to tag and release?" || exit
+
 declare release_message
 read -r -d '' release_message <<-EOF
 	$(git-cliff --strip header --unreleased --tag "${tag_version}")
@@ -40,12 +75,6 @@ printf "\n"
 echo Running: git show "${tag_version}"
 git show "${tag_version}"
 printf "\n"
-
-declare current_branch
-current_branch="$(git branch --show-current)"
-
-declare current_remote
-current_remote="$(git rev-parse --abbrev-ref --symbolic-full-name "@{u}" | cut -f1 -d'/')"
 
 printf "\n"
 printf "Staged commits:\n"
