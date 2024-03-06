@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.10] - 2024-03-06
+
+### ⚒  CI
+
+- *(tag-release)* Abort when no unreleased commits are found
+- *(tag-release)* Reduce duplicate code by adding git_lg()
+
 ## [1.0.9] - 2024-03-05
 
 ### 🐛 Bug Fixes
@@ -17,6 +24,10 @@ All notable changes to this project will be documented in this file.
 ### ⚙️ Miscellaneous Tasks
 
 - Add a checkout refresh script
+
+### Release
+
+- 1.0.9 - fix git_guess_default_branch()
 
 ## [1.0.8] - 2024-03-03
 
