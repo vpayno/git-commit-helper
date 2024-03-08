@@ -2,12 +2,23 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.11] - 2024-03-08
+
+### 🐛 Bug Fixes
+
+- *(git-helpers-lib)* Add git_guess_fork_remote() and git_guess_upstream_remote()
+- *(git-helpers-lib)* More refactoring, fixes
+
 ## [1.0.10] - 2024-03-06
 
 ### ⚒  CI
 
 - *(tag-release)* Abort when no unreleased commits are found
 - *(tag-release)* Reduce duplicate code by adding git_lg()
+
+### Release
+
+- 1.0.10 - tag-release improvements
 
 ## [1.0.9] - 2024-03-05
 
