@@ -87,6 +87,26 @@ git_guess_default_branch() {
 	fi
 } # git_guess_default_branch()
 
+git_guess_upstream_remote() {
+	if git remote | grep -q "^upstream$"; then
+		printf "upstream"
+	elif git remote | grep -q "^origin$"; then
+		printf "origin"
+	else
+		printf "origin"
+	fi
+} # git_guess_upstream_remote()
+
+git_guess_fork_remote() {
+	if git remote | grep -q "^fork$"; then
+		printf "fork"
+	elif git remote | grep -q "^${USER}$"; then
+		printf "%s" "${USER}"
+	else
+		printf "%s" "origin"
+	fi
+} # git_guess_fork_remote()
+
 git_config_check_default_branch() {
 	if config misc.default-branch >&/dev/null; then
 		default_branch="$(config --get misc.default-branch)"
@@ -127,7 +147,7 @@ git_config_check_upstream_remote() {
 				# ERROR: Remote Upstream Not Found
 				Set the default upstream remote with the command
 				\`\`\`text
-				git config --local misc.remote-upstream ${current_remote}
+				git config --local misc.remote-upstream $(git_guess_upstream_remote)
 				\`\`\`
 
 				Use \`origin\`, \`upstream\`, \`github\`, \`gitlab\`, etc.
@@ -155,7 +175,7 @@ git_config_check_fork_remote() {
 				# ERROR: Remote Upstream Not Found
 				Set the default fork remote with the command
 				\`\`\`text
-				git config --local misc.remote-fork fork
+				git config --local misc.remote-fork $(git_guess_fork_remote)
 				\`\`\`
 
 				Use \`fork\`, \`${USER}\`, etc.
