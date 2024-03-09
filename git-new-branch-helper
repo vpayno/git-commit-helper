@@ -70,7 +70,7 @@ main() {
 		git worktree list
 		printf "\n"
 	else
-		git switch -C "${new_branch_name}"
+		git switch -C "${new_branch_name}" --track "${current_remote}/${new_branch_name}"
 	fi
 
 	message="$(
