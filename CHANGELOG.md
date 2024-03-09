@@ -2,12 +2,26 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.12] - 2024-03-09
+
+### 🐛 Bug Fixes
+
+- *(git-new-branch-helper)* Fix next steps doc
+
+### ⚒  CI
+
+- Add CODEOWNERS file
+
 ## [1.0.11] - 2024-03-08
 
 ### 🐛 Bug Fixes
 
 - *(git-helpers-lib)* Add git_guess_fork_remote() and git_guess_upstream_remote()
 - *(git-helpers-lib)* More refactoring, fixes
+
+### Release
+
+- 1.0.11 - improvements and fixes
 
 ## [1.0.10] - 2024-03-06
 
