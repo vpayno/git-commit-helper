@@ -78,8 +78,16 @@ main() {
 			# Next steps:
 
 			\`\`\`text
-			pushd "${worktree_path}"
+		EOF
 
+		if ${use_worktree}; then
+			cat <<-EOF
+				pushd "${worktree_path}"
+
+			EOF
+		fi
+
+		cat <<-EOF
 			git branch --show-current
 
 			git log --pretty=format:'%h -%d %s (%cr) <%an>' --abbrev-commit --decorate -n 5
