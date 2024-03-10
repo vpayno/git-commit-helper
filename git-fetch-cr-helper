@@ -136,8 +136,6 @@ get_cr_fetch_path() {
 
 main() {
 	local default_branch
-	local remote_upstream
-	local remote_fork
 	local chosen_remote_url
 
 	local message

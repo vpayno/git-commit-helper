@@ -6,9 +6,6 @@ source "${HOME}/.git-helpers/git-helpers-lib" || exit
 process_global_args
 
 main() {
-	local remote_upstream
-	local remote_fork
-
 	local message
 
 	local repo_main_path

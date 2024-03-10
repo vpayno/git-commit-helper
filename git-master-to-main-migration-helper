@@ -27,9 +27,6 @@ get_remote_url_prefix() {
 } # get_remote_url_prefix()
 
 main() {
-	local remote_upstream
-	local remote_fork
-
 	local message
 
 	local repo_name
