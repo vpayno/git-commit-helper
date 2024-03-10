@@ -23,6 +23,8 @@ main() {
 
 	git_config_check_default_branch
 
+	default_branch="$(get_default_branch)"
+
 	current_origin="$(git rev-parse --abbrev-ref --symbolic-full-name "@{u}" | cut -f1 -d'/')"
 	current_branch="$(git branch --show-current)"
 

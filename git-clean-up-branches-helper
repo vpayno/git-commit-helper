@@ -26,6 +26,8 @@ main() {
 
 	git_switch_to_default_branch
 
+	default_branch="$(get_default_branch)"
+
 	mapfile -t all_remotes < <(git remote | sort -uV)
 
 	local save_ifs="${IFS}"

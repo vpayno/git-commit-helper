@@ -170,6 +170,7 @@ main() {
 	git_config_check_fork_remote
 
 	repo_main_path="$(git rev-parse --show-toplevel)"
+	default_branch="$(get_default_branch)"
 
 	println "# switching to default branch"
 	git switch "${default_branch}"
