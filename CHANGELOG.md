@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.13] - 2024-03-15
+
+### 🐛 Bug Fixes
+
+- *(git-new-branch-helper)* Fix branch tracking when not using worktrees
+- *(git-helpers-lib)* Default_branch fixes after refactoring
+- *(git-helpers-lib)* Dangling variable fixes after refactoring
+- *(delete-helpers)* Pull default branch after switching to it
+
 ## [1.0.12] - 2024-03-09
 
 ### 🐛 Bug Fixes
@@ -11,6 +20,10 @@ All notable changes to this project will be documented in this file.
 ### ⚒  CI
 
 - Add CODEOWNERS file
+
+### Release
+
+- 1.0.12 - cosmetic fix for git-new-branch-helper
 
 ## [1.0.11] - 2024-03-08
 
