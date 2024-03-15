@@ -7,6 +7,7 @@ process_global_args
 
 main() {
 	local default_branch
+	local current_remote
 
 	local -A map
 	local -a worktrees
@@ -27,6 +28,9 @@ main() {
 	git_switch_to_default_branch
 
 	default_branch="$(get_default_branch)"
+	current_remote="$(get_current_remote)"
+
+	git pull "${current_remote}" "${default_branch}"
 
 	mapfile -t all_remotes < <(git remote | sort -uV)
 
