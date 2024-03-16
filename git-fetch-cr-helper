@@ -248,7 +248,8 @@ main() {
 
 	if [[ ${cr_author} != app/dependabot ]]; then
 		git fetch "${cr_author}"
-		git branch --set-upstream-to="${cr_author}/${remote_branch}" "${remote_branch}"
+		git branch --set-upstream-to="${cr_author}/${remote_branch}" "${remote_branch}" ||
+			git branch --set-upstream-to="${cr_remote_name}/${remote_branch}" "${remote_branch}"
 		printf "\n"
 	fi
 
