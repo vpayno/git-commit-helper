@@ -13,7 +13,7 @@ cleanup_on_exit() {
 } # cleanup_on_exit()
 
 choose_remote_type() {
-	gum choose --limit=1 github gitlab
+	gum choose --limit=1 "${@}" github gitlab other
 } # choose_remote_type()
 
 get_gh_pr_data() {
@@ -176,12 +176,33 @@ main() {
 	source_branch="$(git branch --show-current)"
 	current_remote="$(git rev-parse --abbrev-ref --symbolic-full-name "@{u}" | cut -f1 -d'/')"
 
-	println "# Please select the remote type from where the change review will be fetched from:"
-	remote_type="$(choose_remote_type)"
-
 	println "# Please select the remote you want to fetch the change review from:"
 	cr_remote_name="$(get_cr_remote_name)"
 	cr_remote_url="$(get_cr_remote_url "${cr_remote_name}")"
+
+	println "## Selected remote: \`${cr_remote_name}\` -> \`${cr_remote_url}\`"
+
+	# because of bash string escape issues, using a separate variable with single quotes for regex
+	declare github_regex='\bgithub\b\.'
+	declare gitlab_regex='\bgitlab\b\.'
+
+	declare selected_remote_type="--selected="
+
+	if [[ ${cr_remote_url} =~ ${github_regex} ]]; then
+		selected_remote_type+="github"
+	elif [[ ${cr_remote_url} =~ ${gitlab_regex} ]]; then
+		selected_remote_type+="gitlab"
+	else
+		selected_remote_type+="other"
+	fi
+
+	println "# Please select the remote type of \`${cr_remote_name}\` remote from where the change review will be fetched from:"
+	remote_type="$(choose_remote_type "${selected_remote_type}")"
+
+	if [[ ${remote_type} == other ]]; then
+		println "# ERROR: unsupported remote type, exiting..."
+		exit 1
+	fi
 
 	# pull/$1/head:prs/$1
 	# merge-requests/$1/head:mrs/$1
