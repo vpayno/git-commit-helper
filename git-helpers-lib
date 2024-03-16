@@ -154,6 +154,7 @@ git_config_check_upstream_remote() {
 
 				Use \`origin\`, \`upstream\`, \`github\`, \`gitlab\`, etc.
 				It needs to be a remote returned by \`git remote -v\`.
+
 			EOF
 		)"
 		println "${message}"
@@ -185,6 +186,7 @@ git_config_check_fork_remote() {
 
 				Use \`fork\`, \`${USER}\`, etc.
 				It needs to be a remote returned by \`git remote -v\`.
+
 			EOF
 		)"
 		println "${message}"
