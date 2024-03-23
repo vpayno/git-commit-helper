@@ -65,7 +65,7 @@ main() {
 			println "# All changes committed and found fixup commits"
 
 			printf "\n"
-			println "## Commits:"
+			println "## Commits before rebase:"
 			git log --pretty=format:'%h -%d %s (%cr) <%an>' --abbrev-commit --decorate "${commit_selector}"
 			printf "\n"
 			printf "\n"
@@ -73,8 +73,16 @@ main() {
 			println "## Running: git rebase --interactive --autosquash ${rebase_target}"
 			if gum confirm "Do you want to rebase and autosquash?"; then
 				git rebase --interactive --autosquash "${rebase_target}"
+				printf "\n"
+
+				printf "\n"
+				println "## Commits after rebase:"
+				git log --pretty=format:'%h -%d %s (%cr) <%an>' --abbrev-commit --decorate "${commit_selector}"
+				printf "\n"
+				printf "\n"
+			else
+				println "## Canceled fixup rebase."
 			fi
-			printf "\n"
 		fi
 
 		return
@@ -84,8 +92,12 @@ main() {
 
 	while :; do
 		println "# Please choose the commit you would like to fixup:"
-		commit="$(gum choose "${commits[@]}")"
-		printf "\n"
+		if commit="$(gum choose "${commits[@]}")"; then
+			printf "\n"
+		else
+			println "## Canceled fixup commit target selection."
+			return 1
+		fi
 
 		hash="${commit%% *}"
 
@@ -95,6 +107,8 @@ main() {
 
 		if gum confirm "Is this the correct commit?"; then
 			break
+		else
+			println "## Canceled fixup commit target creation."
 		fi
 	done
 
