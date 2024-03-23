@@ -141,9 +141,11 @@ printf "\n"
 gum confirm "Are you sure you want to tag and release?" || exit
 
 declare release_message
+set +e
 read -r -d '' release_message <<-EOF
 	$(git-cliff --strip header --unreleased --tag "${tag_version}")
 EOF
+set -e
 
 echo Running: git-cliff --tag "${tag_version}"
 git-cliff --tag "${tag_version}" >CHANGELOG.md
