@@ -53,6 +53,7 @@ declare -a commits
 
 mapfile -t commits < <(git log --pretty=format:'%h -%d %s (%cr) <%an>' --abbrev-commit --decorate "${commit_selector}")
 
+declare bump_major=false
 declare bump_minor=false
 
 println "## Looking for feature|security commits..."
@@ -65,6 +66,21 @@ printf "\n"
 for c in "${commits[@]}"; do
 	if echo "${c}" | grep -q -E "${regex_minor_bump}"; then
 		bump_minor=true
+		break
+	fi
+done
+
+println "## Looking for Breaking Change commits..."
+
+declare regex_major_bump='\s[a-z]+(\!:|\([a-z0-9]+\)\!:)\s'
+
+printf "%s\n" "${commits[@]}" | grep -E "${regex_minor_bump}" || true
+printf "\n"
+
+for c in "${commits[@]}"; do
+	if echo "${c}" | grep -q -E "${regex_major_bump}"; then
+		bump_major=true
+		bump_minor=false
 		break
 	fi
 done
@@ -83,7 +99,13 @@ tag_minor="${tag_current%.*}"
 tag_minor="${tag_minor#*.}"
 tag_patch="${tag_current##*.}"
 
-if ${bump_minor}; then
+if ${bump_major}; then
+	println "### Bumping major version number"
+
+	((tag_major += 1))
+	tag_minor=0
+	tag_patch=0
+elif ${bump_minor}; then
 	println "### Bumping minor version number"
 
 	((tag_minor += 1))
