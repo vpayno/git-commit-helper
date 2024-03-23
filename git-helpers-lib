@@ -265,30 +265,37 @@ exit_if_zero() {
 exit_if_no_staged_changes() {
 	local message
 
-	# true if no staged changes, false if changes are staged
-	set +e
+	has_staged_changes || exit
+} # exit_if_no_staged_changes()
+
+# false if no staged changes, true if changes are staged
+has_staged_changes() {
+
+	local message
+
 	if ! git diff --cached --quiet; then
 		println "# Found the following staged changes:"
 		git status
 		printf "\n"
-	else
-		message="$(
-			cat <<-EOF
-				# ERROR: Can't find staged changes
-
-				You can stage changes with one or more of these commands:
-				\`\`\`text
-				git add --patch
-				git add -u .
-				git add file(s)
-				\`\`\`
-			EOF
-		)"
-		println "${message}"
-		exit 1
+		return 0
 	fi
-	set -e
-} # exit_if_no_staged_changes()
+
+	message="$(
+		cat <<-EOF
+			# ERROR: Can't find staged changes
+
+			You can stage changes with one or more of these commands:
+			\`\`\`text
+			git add --patch
+			git add -u .
+			git add file(s)
+			\`\`\`
+		EOF
+	)"
+	println "${message}"
+
+	return 1
+} # has_staged_changes()
 
 declare -a args=("${@}")
 declare arg
