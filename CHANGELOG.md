@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.14] - 2024-03-23
+
+### 🚀 Features
+
+- *(fixup)* Add rebase autosquash mode
+
+### 🐛 Bug Fixes
+
+- *(git-helpers-lib)* Add new line at the end of the output of git_config_check_*_remote()
+- *(git-helpers-lib)* Add bash shebang to help helix detect the file type
+- *(git-fetchcr-helper)* Select remote first, then the remote type
+- *(git-fetchcr-helper)* Set remote branch tracking, first try fork, then cr remote
+- *(git-helpers-lib)* Split up exit_if_no_staged_changes() and has_staged_changes()
+- *(fixup)* Improve ux around canceling prompts
+
 ## [1.0.13] - 2024-03-15
 
 ### 🐛 Bug Fixes
@@ -10,6 +25,10 @@ All notable changes to this project will be documented in this file.
 - *(git-helpers-lib)* Default_branch fixes after refactoring
 - *(git-helpers-lib)* Dangling variable fixes after refactoring
 - *(delete-helpers)* Pull default branch after switching to it
+
+### Release
+
+- 1.0.13 - minor fixes and improvements
 
 ## [1.0.12] - 2024-03-09
 
