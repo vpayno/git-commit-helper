@@ -72,7 +72,8 @@ main() {
 
 			println "## Running: git rebase --interactive --autosquash ${rebase_target}"
 			if gum confirm "Do you want to rebase and autosquash?"; then
-				git rebase --interactive --autosquash "${rebase_target}"
+				# shellcheck disable=SC2086
+				git rebase --interactive --autosquash ${rebase_target} # don't quote since it's sometimes empty
 				printf "\n"
 
 				printf "\n"
