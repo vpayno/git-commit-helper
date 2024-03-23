@@ -19,7 +19,8 @@ main() {
 	local commit_selector
 	local rebase_target
 
-	exit_if_no_staged_changes
+	# create rebase
+	local mode="create"
 
 	git_config_check_default_branch
 
@@ -38,9 +39,47 @@ main() {
 
 	mapfile -t commits < <(git log --pretty=format:'%h -%d %s (%cr) <%an>' --abbrev-commit --decorate "${commit_selector}")
 
+	if ! has_staged_changes false; then
+		mode="rebase"
+	fi
+
 	if [[ ${#commits[@]} -eq 0 ]]; then
 		println "# Didn't find any commits that can be fixed up."
-		exit
+		return 1
+	fi
+
+	if is_git_clean && [[ ${mode} == rebase ]]; then
+		local found_fixup=false
+		local c
+
+		println "## Looking for fixup commits..."
+		for c in "${commits[@]}"; do
+			local regex='\sfixup\!\s'
+			if [[ ${c} =~ ${regex} ]]; then
+				found_fixup=true
+				break
+			fi
+		done
+
+		if ${found_fixup}; then
+			println "# All changes committed and found fixup commits"
+
+			printf "\n"
+			println "## Commits:"
+			git log --pretty=format:'%h -%d %s (%cr) <%an>' --abbrev-commit --decorate "${commit_selector}"
+			printf "\n"
+			printf "\n"
+
+			println "## Running: git rebase --interactive --autosquash ${rebase_target}"
+			if gum confirm "Do you want to rebase and autosquash?"; then
+				git rebase --interactive --autosquash "${rebase_target}"
+			fi
+			printf "\n"
+		fi
+
+		return
+	else
+		has_staged_changes_verbose || return 0
 	fi
 
 	while :; do

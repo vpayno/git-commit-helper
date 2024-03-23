@@ -270,10 +270,19 @@ exit_if_no_staged_changes() {
 
 # false if no staged changes, true if changes are staged
 has_staged_changes() {
-
 	local message
 
 	if ! git diff --cached --quiet; then
+		return 0
+	fi
+
+	return 1
+} # has_staged_changes()
+
+has_staged_changes_verbose() {
+	local message
+
+	if has_staged_changes; then
 		println "# Found the following staged changes:"
 		git status
 		printf "\n"
@@ -295,7 +304,20 @@ has_staged_changes() {
 	println "${message}"
 
 	return 1
-} # has_staged_changes()
+} # has_staged_changes_verbose()
+
+is_git_clean() {
+	# --quiet returns 0 when clean and 1 when dirty
+	git diff --quiet && git diff --cached --quiet
+} # is_git_clean()
+
+is_git_dirty() {
+	if is_git_clean; then
+		return 1
+	fi
+
+	return 0
+} # is_git_dirty()
 
 declare -a args=("${@}")
 declare arg
