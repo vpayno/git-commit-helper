@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.15] - 2024-03-23
+
+### 🐛 Bug Fixes
+
+- *(fixup)* Fix rebase target bug
+
+### ⚒  CI
+
+- Autobump next tag (minor.patch) based on unreleased commits
+- Autobump major number when releasing breaking changes
+- Fix bug in changelog generation after global set -e was enabled
+
 ## [1.0.14] - 2024-03-23
 
 ### 🚀 Features
@@ -16,6 +28,10 @@ All notable changes to this project will be documented in this file.
 - *(git-fetchcr-helper)* Set remote branch tracking, first try fork, then cr remote
 - *(git-helpers-lib)* Split up exit_if_no_staged_changes() and has_staged_changes()
 - *(fixup)* Improve ux around canceling prompts
+
+### Release
+
+- 1.0.14 - general improvements and new fixup feature
 
 ## [1.0.13] - 2024-03-15
 
