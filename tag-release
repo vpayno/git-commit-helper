@@ -1,28 +1,20 @@
 #!/usr/bin/env bash
 
-declare tag_version="${1}"
-declare tag_note="${2}"
+# shellcheck source=git-helpers-lib
+source "${HOME}/.git-helpers/git-helpers-lib" || exit
+
+declare tag_note="${1}"
+
+declare tag_version
 
 git_lg() {
 	git log --pretty=format:'%h -%d %s (%cr) <%an>' --abbrev-commit --decorate "${@}"
 } # git_lg()
 
-if [[ ! ${tag_version} =~ ^[0-9]+[.][0-9]+[.][0-9]+([.][0-9]+)?$ ]]; then
-	printf "ERROR: tag [%s] doesn't match the regex [%s]\n" "${tag_version}" '^[0-9]+[.][0-9]+[.][0-9]+([.][0-9]+)?$'
-	exit 1
-fi
-
-if git tag | grep -E "^${tag_version}$"; then
-	printf "ERROR: tag [%s] already exits\n" "${tag_version}"
-	exit 1
-fi
-
 if [[ -z ${tag_note} ]]; then
 	printf "ERROR: tag note/comment is empty\n"
 	exit 1
 fi
-
-declare tag_message="release: ${tag_version} - ${tag_note}"
 
 declare current_branch
 current_branch="$(git branch --show-current)"
@@ -38,7 +30,7 @@ declare -i unreleased_commit_count=0
 # Can't reliably use wc because the last log line doesn't end with a new line.
 # So 0 and 1 commits are indistinguishable from each other.
 # format: ^6e5f52e - (HEAD -> main) ci(tag-release): abort when no unreleased commits are found (3 minutes ago) <Victor Payno>$
-unreleased_commit_count="$(git_lg "${previous_tag}".. | grep -c -E '[a-z0-9]+\s+-')"
+unreleased_commit_count="$(git_lg "${previous_tag}".. | grep -c -E '[a-z0-9]+\s+-' || true)"
 
 if [[ ${unreleased_commit_count} -eq 0 ]]; then
 	printf "\n"
@@ -46,6 +38,73 @@ if [[ ${unreleased_commit_count} -eq 0 ]]; then
 	printf "\n"
 	git_lg -n 5
 	printf "\n\n"
+	exit 1
+fi
+
+declare default_branch
+declare current_branch
+
+default_branch="$(get_default_branch)"
+current_branch="$(git branch --show-current)"
+
+declare commit_selector="${previous_tag}.."
+
+declare -a commits
+
+mapfile -t commits < <(git log --pretty=format:'%h -%d %s (%cr) <%an>' --abbrev-commit --decorate "${commit_selector}")
+
+declare bump_minor=false
+
+println "## Looking for feature|security commits..."
+
+declare regex_minor_bump='\s(feat|security)(:|\([a-z0-9]+\):)\s'
+
+printf "%s\n" "${commits[@]}" | grep -E "${regex_minor_bump}" || true
+printf "\n"
+
+for c in "${commits[@]}"; do
+	if echo "${c}" | grep -q -E "${regex_minor_bump}"; then
+		bump_minor=true
+		break
+	fi
+done
+
+declare tag_current
+
+tag_current="$(git tag --list -n0 | tail -n1)"
+
+# these get treated as strings and integers
+declare tag_major
+declare tag_minor
+declare tag_patch
+
+tag_major="${tag_current%%.*}"
+tag_minor="${tag_current%.*}"
+tag_minor="${tag_minor#*.}"
+tag_patch="${tag_current##*.}"
+
+if ${bump_minor}; then
+	println "### Bumping minor version number"
+
+	((tag_minor += 1))
+	tag_patch=0
+else
+	println "### Bumping patch version number"
+
+	((tag_patch += 1))
+fi
+
+tag_version="${tag_major}.${tag_minor}.${tag_patch}"
+
+declare tag_message="release: ${tag_version} - ${tag_note}"
+
+if [[ ! ${tag_version} =~ ^[0-9]+[.][0-9]+[.][0-9]+([.][0-9]+)?$ ]]; then
+	printf "ERROR: tag [%s] doesn't match the regex [%s]\n" "${tag_version}" '^[0-9]+[.][0-9]+[.][0-9]+([.][0-9]+)?$'
+	exit 1
+fi
+
+if git tag | grep -E "^${tag_version}$"; then
+	printf "ERROR: tag [%s] already exits\n" "${tag_version}"
 	exit 1
 fi
 

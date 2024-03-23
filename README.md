@@ -100,11 +100,10 @@ printf "\n"
 Use this Runme playbook to tag a new release.
 
 ```bash { background=false category=release closeTerminalOnSuccess=false excludeFromRunAll=true interactive=true interpreter=bash name=release-create promptEnv=true terminalRows=20 }
-export TAG_VER="x.y.z"
 export TAG_TITLE="short description"
 
 reset
-./tag-release "${TAG_VER}" "${TAG_TITLE}"
+./tag-release "${TAG_TITLE}"
 ```
 
 ## Helpers
