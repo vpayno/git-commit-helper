@@ -1,5 +1,15 @@
 #!/usr/bin/env bash
 
+# semver rules
+# - major: increment on breaking changes
+# - minor: increment on new features or security updates
+# - patch: increment on everything else
+#
+# calver rules
+# - major: increment on UTC YYYYMMDD change
+# - minor: increment on feat or security updates
+# - patch: increment on everythng else
+
 # shellcheck source=git-helpers-lib
 source "${HOME}/.git-helpers/git-helpers-lib" || exit
 
