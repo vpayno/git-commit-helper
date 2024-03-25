@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.16] - 2024-03-25
+
+### 🐛 Bug Fixes
+
+- *(commit)* Add ci, security, revert, perf commit types
+
+### ⚒  CI
+
+- Add tag rules notes to tag-release
+
 ## [1.0.15] - 2024-03-23
 
 ### 🐛 Bug Fixes
@@ -13,6 +23,10 @@ All notable changes to this project will be documented in this file.
 - Autobump next tag (minor.patch) based on unreleased commits
 - Autobump major number when releasing breaking changes
 - Fix bug in changelog generation after global set -e was enabled
+
+### Release
+
+- 1.0.15 - auto-increment versions based on commit messages
 
 ## [1.0.14] - 2024-03-23
 
