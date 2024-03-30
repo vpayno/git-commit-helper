@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -e
+
 if [[ ! -f install-git-aliases.sh ]]; then
 	printf "ERROR: you must run this from the git-helpers repo\n"
 	exit 1
