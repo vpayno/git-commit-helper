@@ -8,7 +8,7 @@ process_global_args
 main() {
 	local default_branch
 	local current_branch
-	local current_origin
+	local current_remote
 
 	local message
 
@@ -26,11 +26,11 @@ main() {
 
 	default_branch="$(get_default_branch)"
 
-	current_origin="$(git rev-parse --abbrev-ref --symbolic-full-name "@{u}" | cut -f1 -d'/')"
+	current_remote="$(git rev-parse --abbrev-ref --symbolic-full-name "@{u}" | cut -f1 -d'/')"
 	current_branch="$(git branch --show-current)"
 
 	if [[ ${current_branch} == "${default_branch}" ]]; then
-		commit_selector="${current_origin}/${current_branch}..HEAD"
+		commit_selector="${current_remote}/${current_branch}..HEAD"
 		rebase_target=""
 	else
 		commit_selector="${default_branch}.."
@@ -125,7 +125,7 @@ main() {
 
 			\`\`\`text
 			git rebase --interactive --autosquash ${rebase_target}
-			git push --force ${current_origin} ${current_branch}
+			git push --force ${current_remote} ${current_branch}
 			\`\`\`
 		EOF
 	)"
