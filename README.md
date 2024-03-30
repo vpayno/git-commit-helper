@@ -22,8 +22,7 @@ Just finished [Effortless](https://gregmckeown.com/books/effortless/) and I'm tr
 
 To install the git helpers and project dependencies run the following commands:
 
-```bash { background=false category=setup closeTerminalOnSuccess=false excludeFromRunAll=true interactive=true interpreter=bash name=setup-git-helpers promptEnv=true terminalRows=10 }
-git clone https://github.com/vpayno/git-helpers.git ~/.git-helpers
+```bash { background=false category=setup closeTerminalOnSuccess=true excludeFromRunAll=true interactive=true interpreter=bash name=setup-git-helpers promptEnv=true terminalRows=10 }
 cd ~/.git-helpers
 ./install-git-aliases.sh
 ./install-deps.sh
@@ -35,37 +34,37 @@ Note: you can use [RunMe](https://github.com/stateful/runme) to use this readme 
 
 To install all the dependencies at once you can use the included installation script:
 
-```bash { background=false category=setup closeTerminalOnSuccess=false excludeFromRunAll=false interactive=true interpreter=bash name=install-dep-all promptEnv=true terminalRows=10 }
+```bash { background=false category=setup closeTerminalOnSuccess=true excludeFromRunAll=false interactive=true interpreter=bash name=install-dep-all promptEnv=true terminalRows=10 }
 ./install-deps.sh
 ```
 
 - [Gum](https://github.com/charmbracelet/gum)
 
-```bash { background=false category=dependency closeTerminalOnSuccess=false excludeFromRunAll=true interactive=true interpreter=bash name=install-dep-gum promptEnv=true terminalRows=10 }
+```bash { background=false category=dependency closeTerminalOnSuccess=true excludeFromRunAll=true interactive=true interpreter=bash name=install-dep-gum promptEnv=true terminalRows=10 }
 go install github.com/charmbracelet/gum@latest
 ```
 
 - [Glow](https://github.com/charmbracelet/glow)
 
-```bash { background=false category=dependency closeTerminalOnSuccess=false excludeFromRunAll=true interactive=true interpreter=bash name=install-dep-glow promptEnv=true terminalRows=10 }
+```bash { background=false category=dependency closeTerminalOnSuccess=true excludeFromRunAll=true interactive=true interpreter=bash name=install-dep-glow promptEnv=true terminalRows=10 }
 go install github.com/charmbracelet/glow@latest
 ```
 
 - [Confetty](https://github.com/maaslalani/confetty)
 
-```bash { background=false category=dependency closeTerminalOnSuccess=false excludeFromRunAll=true interactive=true interpreter=bash name=install-dep-confetty promptEnv=true terminalRows=10 }
+```bash { background=false category=dependency closeTerminalOnSuccess=true excludeFromRunAll=true interactive=true interpreter=bash name=install-dep-confetty promptEnv=true terminalRows=10 }
 go install github.com/maaslalani/confetty@latest
 ```
 
 - [GitHub Cli](https://github.com/cli/cli)
 
-```bash { background=false category=dependency closeTerminalOnSuccess=false excludeFromRunAll=true interactive=true interpreter=bash name=install-dep-github-cli promptEnv=true terminalRows=10 }
+```bash { background=false category=dependency closeTerminalOnSuccess=true excludeFromRunAll=true interactive=true interpreter=bash name=install-dep-github-cli promptEnv=true terminalRows=10 }
 go install github.com/cli/cli/v2/cmd/gh@latest
 ```
 
 - [GitLab Cli](https://gitlab.com/gitlab-org/cli)
 
-```bash { background=false category=dependency closeTerminalOnSuccess=false excludeFromRunAll=true interactive=true interpreter=bash name=install-dep-gitlab-cli promptEnv=true terminalRows=10 }
+```bash { background=false category=dependency closeTerminalOnSuccess=true excludeFromRunAll=true interactive=true interpreter=bash name=install-dep-gitlab-cli promptEnv=true terminalRows=10 }
 go install gitlab.com/gitlab-org/cli/cmd/glab@latest
 ```
 
@@ -79,7 +78,7 @@ The `./tag-release` script is used to
 
 Use this Runme playbook to list the latest 10 releases:
 
-```bash { background=false category=release closeTerminalOnSuccess=false excludeFromRunAll=true interactive=true interpreter=bash name=releases-list promptEnv=true terminalRows=10 }
+```bash { background=false category=release closeTerminalOnSuccess=true excludeFromRunAll=true interactive=true interpreter=bash name=releases-list promptEnv=true terminalRows=10 }
 printf "\n"
 printf "Latest releases:\n"
 printf "\n"
@@ -89,7 +88,7 @@ printf "\n"
 
 Use this Runme playbook to list the unreleased commits:
 
-```bash { background=false category=release closeTerminalOnSuccess=false excludeFromRunAll=true interactive=true interpreter=bash name=releases-unreleased-commits promptEnv=true terminalRows=10 }
+```bash { background=false category=release closeTerminalOnSuccess=true excludeFromRunAll=true interactive=true interpreter=bash name=releases-unreleased-commits promptEnv=true terminalRows=10 }
 printf "\n"
 printf "Unreleased commits since %s:\n" "$(git tag --list -n0 | tail -n1)"
 printf "\n"
@@ -99,7 +98,7 @@ printf "\n"
 
 Use this Runme playbook to tag a new release.
 
-```bash { background=false category=release closeTerminalOnSuccess=false excludeFromRunAll=true interactive=true interpreter=bash name=release-create promptEnv=true terminalRows=20 }
+```bash { background=false category=release closeTerminalOnSuccess=true excludeFromRunAll=true interactive=true interpreter=bash name=release-create promptEnv=true terminalRows=20 }
 export TAG_TITLE="short description"
 
 reset
@@ -110,7 +109,7 @@ reset
 
 Install or refresh git aliases for the helpers.
 
-```bash { background=false category=refresh,git closeTerminalOnSuccess=false excludeFromRunAll=false interactive=true interpreter=bash name=install-git-helpers promptEnv=true terminalRows=10 }
+```bash { background=false category=refresh,git closeTerminalOnSuccess=true excludeFromRunAll=false interactive=true interpreter=bash name=install-git-helpers promptEnv=true terminalRows=10 }
 ./install-git-aliases.sh
 ```
 
