@@ -81,8 +81,23 @@ main() {
 				git log --pretty=format:'%h -%d %s (%cr) <%an>' --abbrev-commit --decorate "${commit_selector}"
 				printf "\n"
 				printf "\n"
+				println "# Don't forget to run \`git push --force\` to update the git server."
+				printf "\n"
 			else
 				println "## Canceled fixup rebase."
+			fi
+
+		# check to see if we need to force push
+		elif git branch -v | grep -E "\b${current_branch}\b" | grep -q -E '\[ahead [0-9]+, behind [0-9]+]'; then
+			printf "\n"
+			println "## Commits that need to be force pushed:"
+			git log --pretty=format:'%h -%d %s (%cr) <%an>' --abbrev-commit --decorate "${commit_selector}"
+			printf "\n"
+
+			if gum confirm "Do you want to force push?"; then
+				printf "\n"
+				git push --force "${current_remote}" "${current_branch}"
+				printf "\n"
 			fi
 		fi
 
