@@ -143,6 +143,7 @@ fi
 tag_version="${tag_major}.${tag_minor}.${tag_patch}"
 
 declare tag_message="release: ${tag_version} - ${tag_note}"
+declare release_title="${tag_version} - ${tag_note}"
 
 if [[ ! ${tag_version} =~ ^[0-9]+[.][0-9]+[.][0-9]+([.][0-9]+)?$ ]]; then
 	printf "ERROR: tag [%s] doesn't match the regex [%s]\n" "${tag_version}" '^[0-9]+[.][0-9]+[.][0-9]+([.][0-9]+)?$'
@@ -211,14 +212,14 @@ if gum confirm "Push the staged commits and tag?"; then
 	fi
 
 	if git remote get-url --push --all origin | grep -q -E '^git@github[.]'; then
-		echo Running: gh release create "${tag_version}" --title "${tag_version}" --notes \""${release_message}"\"
-		gh release create "${tag_version}" --title "${tag_version}" --notes "${release_message}"
+		echo Running: gh release create "${tag_version}" --title \""${release_title}"\" --notes \""${release_message}"\"
+		gh release create "${tag_version}" --title "${release_title}" --notes "${release_message}"
 		printf "\n"
 	fi
 
 	if git remote get-url --push --all origin | grep -q -E '^git@gitlab[.]'; then
-		echo Running: gh release create "${tag_version}" --title "${tag_version}" --notes \""${release_message}"\"
-		glab release create "${tag_version}" --name "${tag_version}" --notes "${release_message}"
+		echo Running: glab release create "${tag_version}" --name \""${release_title}"\" --notes \""${release_message}"\"
+		glab release create "${tag_version}" --name "${release_title}" --notes "${release_message}"
 		printf "\n"
 	fi
 
@@ -243,12 +244,12 @@ else
 	printf "\n"
 
 	if git remote get-url --push --all origin | grep -q -E '^git@github[.]'; then
-		printf "\tgh release create %s --title %s --notes \"\$(git-cliff --strip header --latest)\"\n" "${tag_version}" "${tag_version}"
+		printf "\tgh release create %s --title \"%s\" --notes \"\$(git-cliff --strip header --latest)\"\n" "${tag_version}" "${release_title}"
 		printf "\n"
 	fi
 
 	if git remote get-url --push --all origin | grep -q -E '^git@gitlab[.]'; then
-		printf "\tglab release create %s --name %s --notes \"\$(git-cliff --strip header --latest)\"" "${tag_version}" "${tag_version}"
+		printf "\tglab release create %s --name \"%s\" --notes \"\$(git-cliff --strip header --latest)\"" "${tag_version}" "${release_title}"
 		printf "\n"
 	fi
 fi
