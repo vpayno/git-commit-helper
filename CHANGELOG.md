@@ -2,11 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.3] - 2024-04-06
+
+### ⚒  CI
+
+- *(tag-release)* Fix release note/summary
+
 ## [1.1.2] - 2024-04-06
 
 ### ⚒  CI
 
 - *(tag-release)* Change gh/gl release title to include tag note/summary
+
+### Release
+
+- 1.1.2 - include tag note/summary in gh/gl release title
 
 ## [1.1.1] - 2024-04-06
 
