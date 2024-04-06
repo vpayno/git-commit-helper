@@ -13,3 +13,7 @@ git stash pop
 [[ -f .gitmodules ]] && git submodule update
 
 git status
+
+./install-git-aliases.sh
+
+./install-deps.sh
