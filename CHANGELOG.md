@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.0] - 2024-04-06
+
+### 🚀 Features
+
+- *(fixup)* Force push if no changes, staged changes, or fixups are found and if local and remote branches are in conflict
+
+### 🐛 Bug Fixes
+
+- *(delete-branch)* Add --force flag to branch delete when branch doesn't appear merged
+
+### 🚜 Refactor
+
+- *(fixup)* Rename current_origin to current_remote
+
+### 📚 Documentation
+
+- Update runme code block options
+- Update setup-git-helpers runme task
+
 ## [1.0.16] - 2024-03-25
 
 ### 🐛 Bug Fixes
@@ -11,6 +30,10 @@ All notable changes to this project will be documented in this file.
 ### ⚒  CI
 
 - Add tag rules notes to tag-release
+
+### Release
+
+- 1.0.16 - testing runme tag-release playbook step
 
 ## [1.0.15] - 2024-03-23
 
