@@ -81,8 +81,12 @@ main() {
 	local -i deleted_count=0
 	local -i error_count=0
 	for branch in "${chosen_branches[@]}"; do
+		local force_delete_arg=""
+
 		if git branch --format '%(refname:lstrip=2)' --no-merged | grep -q -E "^${branch}$"; then
-			if ! gum confirm "Branch [${branch}] isn't merged, continue?"; then
+			if gum confirm "Branch [${branch}] isn't merged, continue?"; then
+				force_delete_arg="--force"
+			else
 				println "## skipping deleting not merged branch [${branch}]"
 				continue
 			fi
@@ -94,7 +98,8 @@ main() {
 			printf "\n"
 		fi
 
-		git branch --delete "${branch}" || ((error_count += 1))
+		# note: don't quote force_delete_arg var below
+		git branch --delete ${force_delete_arg} "${branch}" || ((error_count += 1))
 		printf "\n"
 
 		for remote in "${chosen_remotes[@]}"; do
