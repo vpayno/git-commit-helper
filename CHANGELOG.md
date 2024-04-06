@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.1] - 2024-04-06
+
+### ⚒  CI
+
+- *(tag-release)* Prompt for release notes when not provided as a cli argument
+
 ## [1.1.0] - 2024-04-06
 
 ### 🚀 Features
@@ -20,6 +26,10 @@ All notable changes to this project will be documented in this file.
 
 - Update runme code block options
 - Update setup-git-helpers runme task
+
+### Release
+
+- 1.1.0 - improvements to fixup and delete-branch helpers
 
 ## [1.0.16] - 2024-03-25
 
