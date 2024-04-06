@@ -10,21 +10,18 @@
 # - minor: increment on feat or security updates
 # - patch: increment on everythng else
 
+set -e
+
 # shellcheck source=git-helpers-lib
 source "${HOME}/.git-helpers/git-helpers-lib" || exit
 
-declare tag_note="${1}"
+declare tag_note="${1:-}"
 
 declare tag_version
 
 git_lg() {
 	git log --pretty=format:'%h -%d %s (%cr) <%an>' --abbrev-commit --decorate "${@}"
 } # git_lg()
-
-if [[ -z ${tag_note} ]]; then
-	printf "ERROR: tag note/comment is empty\n"
-	exit 1
-fi
 
 declare current_branch
 current_branch="$(git branch --show-current)"
@@ -59,8 +56,25 @@ current_branch="$(git branch --show-current)"
 
 declare commit_selector="${previous_tag}.."
 
-declare -a commits
+if [[ -z ${tag_note} ]]; then
+	printf "\n"
+	git log --pretty=format:'%h -%d %s (%cr) <%an>' --abbrev-commit --decorate "${commit_selector}"
+	printf "\n"
 
+	printf "\n"
+	println "Please provide a short description for this release:"
+	tag_note="$(gum input --prompt="> " --placeholder="short release description" --width=60)"
+	printf "\n"
+fi
+
+if [[ -z ${tag_note} ]]; then
+	printf "\n"
+	printf "ERROR: tag note/comment is empty\n"
+	printf "\n"
+	exit 1
+fi
+
+declare -a commits
 mapfile -t commits < <(git log --pretty=format:'%h -%d %s (%cr) <%an>' --abbrev-commit --decorate "${commit_selector}")
 
 declare bump_major=false
