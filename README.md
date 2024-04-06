@@ -34,6 +34,12 @@ cd ~/.git-helpers
 ./install-git-aliases.sh
 ```
 
+Use this runme playbook step to refresh the ~/.git-helpers installation.
+
+```bash { background=false category=refresh closeTerminalOnSuccess=true excludeFromRunAll=true interactive=true interpreter=bash name=refresh-git-helpers promptEnv=true terminalRows=10 }
+./refresh-checkout.sh
+```
+
 ### Dependencies
 
 Note: you can use [RunMe](https://github.com/stateful/runme) to use this readme as a playbook.
