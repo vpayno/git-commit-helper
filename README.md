@@ -91,11 +91,28 @@ The `./tag-release` script is used to
 Use this Runme playbook to list the latest 10 releases:
 
 ```bash { background=false category=release closeTerminalOnSuccess=true excludeFromRunAll=true interactive=true interpreter=bash name=releases-list promptEnv=true terminalRows=10 }
+stty rows 25
+stty cols 90
+
 printf "\n"
-printf "Latest releases:\n"
+printf "Latest local releases:\n"
 printf "\n"
-git tag --list -n1 | tail
+git tag --list -n1 | tail -n 10
 printf "\n"
+
+if git remote -v | grep -q -E "^origin\b.*@github\."; then
+    printf "Latest GitHub Releases:\n"
+    printf "\n"
+    gh release list --limit 10
+    printf "\n"
+fi
+
+if git remote -v | grep -q -E "^origin\b.*@gitlab\."; then
+    printf "Latest GitLab Releases:\n"
+    printf "\n"
+    glab release list --page 1 --per-page 10
+    printf "\n"
+fi
 ```
 
 Use this Runme playbook to list the unreleased commits:
