@@ -54,7 +54,8 @@ main() {
 	fi
 
 	println "# Please enter the commit message's body (multi-line):"
-	commit_body="$(gum write --width=72 --placeholder "details of this change")"
+	println "## Please use returns at the end of each line to new-line wrap the lines at <80 characters per line."
+	commit_body="$(gum write --width=79 --placeholder "details of this change")"
 	tmpfile_body="$(mktemp)"
 	echo "${commit_body}" >"${tmpfile_body}"
 	println "# Checking spelling of commit message body"
