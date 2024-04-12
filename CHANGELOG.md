@@ -2,11 +2,26 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.4] - 2024-04-12
+
+### 📚 Documentation
+
+- Add refresh-git-helpers runme playbook step
+- Show github/gitlab releases in releases-list playbook step
+
+### ⚙️ Miscellaneous Tasks
+
+- Update git aliases and dependencies when refreshing the repo
+
 ## [1.1.3] - 2024-04-06
 
 ### ⚒  CI
 
 - *(tag-release)* Fix release note/summary
+
+### Release
+
+- 1.1.3 - fix release note/summary
 
 ## [1.1.2] - 2024-04-06
 
