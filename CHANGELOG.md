@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.3.0] - 2024-04-12
+
+### 🚀 Features
+
+- *(lib)* Prompt to run git config commands on startup
+
 ## [1.2.0] - 2024-04-12
 
 ### 🚀 Features
@@ -12,6 +18,10 @@ All notable changes to this project will be documented in this file.
 
 - *(commit)* Use data file to store commit types
 - *(commit)* Change commit body width to <80
+
+### Release
+
+- 1.2.0 - git-commit-helper improvements
 
 ## [1.1.4] - 2024-04-12
 
