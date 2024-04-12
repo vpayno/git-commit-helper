@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.2.0] - 2024-04-12
+
+### 🚀 Features
+
+- *(commit)* Allow custom commit type definition list
+
+### 🐛 Bug Fixes
+
+- *(commit)* Use data file to store commit types
+- *(commit)* Change commit body width to <80
+
 ## [1.1.4] - 2024-04-12
 
 ### 📚 Documentation
@@ -12,6 +23,10 @@ All notable changes to this project will be documented in this file.
 ### ⚙️ Miscellaneous Tasks
 
 - Update git aliases and dependencies when refreshing the repo
+
+### Release
+
+- 1.1.4 - maintenance chores
 
 ## [1.1.3] - 2024-04-06
 
