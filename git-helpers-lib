@@ -129,7 +129,13 @@ git_config_check_default_branch() {
 			EOF
 		)"
 		println "${message}"
-		exit 1
+
+		if gum confirm "Run \`git config --local misc.default-branch $(git_guess_default_branch)\` now?"; then
+			git config --local misc.default-branch "$(git_guess_default_branch)"
+			default_branch="$(get_default_branch)"
+		else
+			exit 1
+		fi
 	fi
 
 	if ! git branch --format '%(refname:lstrip=2)' | grep -q "^${default_branch}$"; then
@@ -161,7 +167,13 @@ git_config_check_upstream_remote() {
 			EOF
 		)"
 		println "${message}"
-		exit 1
+
+		if gum confirm "Run \`git config --local misc.remote-upstream $(git_guess_upstream_remote)\` now?"; then
+			git config --local misc.remote-upstream "$(git_guess_upstream_remote)"
+			remote_upstream="$(config --get misc.remote-upstream)"
+		else
+			exit 1
+		fi
 	fi
 
 	if ! git remote --verbose | awk '{ print $1 }' | sort -uV | grep -q "^${remote_upstream}$"; then
@@ -193,7 +205,13 @@ git_config_check_fork_remote() {
 			EOF
 		)"
 		println "${message}"
-		exit 1
+
+		if gum confirm "Run \`git config --local misc.remote-fork $(git_guess_fork_remote)\` now?"; then
+			git config --local misc.remote-fork "$(git_guess_fork_remote)"
+			remote_fork="$(config --get misc.remote-fork)"
+		else
+			exit 1
+		fi
 	fi
 
 	if ! git remote --verbose | awk '{ print $1 }' | sort -uV | grep -q "^${remote_fork}$"; then
