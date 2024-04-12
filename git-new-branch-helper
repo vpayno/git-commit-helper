@@ -69,11 +69,17 @@ main() {
 		git worktree add --track -B "${new_branch_name}" "${worktree_path}"
 		printf "\n"
 
+		git push --set-upstream "${target_remote}" "${new_branch_name}"
+		printf "\n"
+
 		println "# Available worktrees:"
 		git worktree list
 		printf "\n"
 	else
 		git switch -C "${new_branch_name}" --track "${target_remote}/${new_branch_name}"
+		printf "\n"
+
+		git push --set-upstream "${target_remote}" "${new_branch_name}"
 		printf "\n"
 	fi
 
