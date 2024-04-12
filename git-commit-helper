@@ -16,7 +16,13 @@ main() {
 	exit_if_no_staged_changes
 
 	println "# Please choose the commit type:"
-	mapfile -t commit_types < <(jq -r '.helpers.commit.types[]' "${HOME}"/.git-helpers/.git-commit-helper.json)
+	if [[ -f ${HOME}/.git-commit-helper.json ]]; then
+		println "## Using custom commit types from ${HOME}/.git-commit-helper.json"
+		mapfile -t commit_types < <(jq -r '.helpers.commit.types[]' "${HOME}"/.git-commit-helper.json)
+	else
+		println "## Using default commit types from ${HOME}/.git-helpers/.git-commit-helper.json"
+		mapfile -t commit_types < <(jq -r '.helpers.commit.types[]' "${HOME}"/.git-helpers/.git-commit-helper.json)
+	fi
 	commit_type="$(gum choose "${commit_types[@]}")"
 	printf "\n"
 
