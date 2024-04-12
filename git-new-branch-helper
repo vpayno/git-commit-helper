@@ -15,6 +15,7 @@ main() {
 
 	local source_branch
 	local current_remote
+	local target_remote
 
 	source_branch="$(git branch --show-current)"
 	current_remote="$(git rev-parse --abbrev-ref --symbolic-full-name "@{u}" | cut -f1 -d'/')"
@@ -32,6 +33,12 @@ main() {
 	fi
 
 	repo_main_path="$(git rev-parse --show-toplevel)"
+
+	mapfile -t all_remotes < <(git remote | sort -uV)
+
+	println "# Choose one or more remotes to delete branches from:"
+	target_remote="$(gum choose --ordered --limit=1 --selected=origin "${all_remotes[@]}")"
+	printf "\n"
 
 	while :; do
 		println "# Please enter the new branch name (^[A-Za-z0-9_-]+$):"
@@ -66,7 +73,8 @@ main() {
 		git worktree list
 		printf "\n"
 	else
-		git switch -C "${new_branch_name}" --track "${current_remote}/${new_branch_name}"
+		git switch -C "${new_branch_name}" --track "${target_remote}/${new_branch_name}"
+		printf "\n"
 	fi
 
 	message="$(
