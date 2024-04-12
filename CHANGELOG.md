@@ -2,11 +2,25 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.3.1] - 2024-04-12
+
+### 🚀 Features
+
+- *(new-branch)* Prompt for target remote name
+
+### 🐛 Bug Fixes
+
+- *(new-branch)* Fix branch tracking and push to target remote
+
 ## [1.3.0] - 2024-04-12
 
 ### 🚀 Features
 
 - *(lib)* Prompt to run git config commands on startup
+
+### Release
+
+- 1.3.0 - git config ease of use improvements
 
 ## [1.2.0] - 2024-04-12
 
