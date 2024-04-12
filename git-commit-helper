@@ -16,7 +16,7 @@ main() {
 	exit_if_no_staged_changes
 
 	println "# Please choose the commit type:"
-	commit_types=("fix" "feat" "ci" "doc" "chore" "test" "style" "refactor" "security" "revert" "perf")
+	mapfile -t commit_types < <(jq -r '.helpers.commit.types[]' "${HOME}"/.git-helpers/.git-commit-helper.json)
 	commit_type="$(gum choose "${commit_types[@]}")"
 	printf "\n"
 
