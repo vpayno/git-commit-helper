@@ -76,7 +76,7 @@ main() {
 		git worktree list
 		printf "\n"
 	else
-		git switch -C "${new_branch_name}" --track "${target_remote}/${new_branch_name}"
+		git switch -C "${new_branch_name}"
 		printf "\n"
 
 		git push --set-upstream "${target_remote}" "${new_branch_name}"
