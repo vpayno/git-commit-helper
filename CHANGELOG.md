@@ -2,11 +2,26 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.3.3] - 2024-04-13
+
+### 🐛 Bug Fixes
+
+- *(new-branch)* Correct remote selection prompt
+- *(new-branch)* Fix branch creation when not using a worktree
+
+### ⚒  CI
+
+- *(tag-release)* Add missing newlines in the output
+
 ## [1.3.2] - 2024-04-13
 
 ### ⚒  CI
 
 - *(tag-release)* Accept dash and underscores in scope names
+
+### Release
+
+- 1.3.2 - fix tag-release script
 
 ## [1.3.1] - 2024-04-12
 
