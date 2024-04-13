@@ -36,7 +36,7 @@ main() {
 
 	mapfile -t all_remotes < <(git remote | sort -uV)
 
-	println "# Choose one or more remotes to delete branches from:"
+	println "# Choose one remote to create the branch on:"
 	target_remote="$(gum choose --ordered --limit=1 --selected=origin "${all_remotes[@]}")"
 	printf "\n"
 
