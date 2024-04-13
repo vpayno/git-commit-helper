@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.3.2] - 2024-04-13
+
+### ⚒  CI
+
+- *(tag-release)* Accept dash and underscores in scope names
+
 ## [1.3.1] - 2024-04-12
 
 ### 🚀 Features
@@ -11,6 +17,10 @@ All notable changes to this project will be documented in this file.
 ### 🐛 Bug Fixes
 
 - *(new-branch)* Fix branch tracking and push to target remote
+
+### Release
+
+- 1.3.1 - new-branch helper improvements
 
 ## [1.3.0] - 2024-04-12
 
