@@ -204,19 +204,23 @@ printf "\n"
 printf "\n"
 
 if gum confirm "Push the staged commits and tag?"; then
+	printf "\n"
 
 	if git remote | grep -q "^fork$"; then
 		git push fork "${current_branch}"
 		git push --tag fork
+		printf "\n"
 	fi
 
 	if git remote | grep -q "^upstream$"; then
 		git push upstream "${current_branch}"
 		git push --tag upstream
+		printf "\n"
 
 	elif git remote | grep -q "^origin$"; then
 		git push origin "${current_branch}"
 		git push --tag origin
+		printf "\n"
 	fi
 
 	if git remote get-url --push --all origin | grep -q -E '^git@github[.]'; then
