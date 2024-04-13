@@ -82,13 +82,16 @@ declare bump_minor=false
 
 println "## Looking for feature|security commits..."
 
-declare regex_minor_bump='\s(feat|security)(:|\([a-z0-9]+\):)\s'
+declare regex_minor_bump='\s(feat|security)(:|\([a-z0-9_-]+\):)\s'
 
 printf "%s\n" "${commits[@]}" | grep -E "${regex_minor_bump}" || true
 printf "\n"
 
 for c in "${commits[@]}"; do
 	if echo "${c}" | grep -q -E "${regex_minor_bump}"; then
+		printf "Found commit matching minor bump regex: %s\n" "${regex_minor_bump}"
+		printf "[%s]\n" "${c}"
+
 		bump_minor=true
 		break
 	fi
@@ -96,13 +99,16 @@ done
 
 println "## Looking for Breaking Change commits..."
 
-declare regex_major_bump='\s[a-z]+(\!:|\([a-z0-9]+\)\!:)\s'
+declare regex_major_bump='\s[a-z]+(\!:|\([a-z0-9_-]+\)\!:)\s'
 
 printf "%s\n" "${commits[@]}" | grep -E "${regex_minor_bump}" || true
 printf "\n"
 
 for c in "${commits[@]}"; do
 	if echo "${c}" | grep -q -E "${regex_major_bump}"; then
+		printf "Found commit matching major bump regex: %s\n" "${regex_major_bump}"
+		printf "[%s]\n" "${c}"
+
 		bump_major=true
 		bump_minor=false
 		break
@@ -164,12 +170,14 @@ git_lg "${previous_tag}"..
 printf "\n"
 
 gum confirm "Are you sure you want to tag and release?" || exit
+printf "\n"
 
 declare release_message
 set +e
 read -r -d '' release_message <<-EOF
 	$(git-cliff --strip header --unreleased --tag "${tag_version}")
 EOF
+printf "\n"
 set -e
 
 echo Running: git-cliff --tag "${tag_version}"
