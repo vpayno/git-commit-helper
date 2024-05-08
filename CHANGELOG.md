@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.3.4] - 2024-05-08
+
+### 🐛 Bug Fixes
+
+- *(fixup)* Show more git command being used
+
 ## [1.3.3] - 2024-04-13
 
 ### 🐛 Bug Fixes
@@ -12,6 +18,10 @@ All notable changes to this project will be documented in this file.
 ### ⚒  CI
 
 - *(tag-release)* Add missing newlines in the output
+
+### Release
+
+- 1.3.3 - mistake clean up
 
 ## [1.3.2] - 2024-04-13
 
