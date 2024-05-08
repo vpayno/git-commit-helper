@@ -70,8 +70,11 @@ main() {
 			printf "\n"
 			printf "\n"
 
-			println "## Running: git rebase --interactive --autosquash ${rebase_target}"
-			if gum confirm "Do you want to rebase and autosquash?"; then
+			if gum confirm "Do you want to rebase and autosquash?
+	=> git rebase --interactive --autosquash ${rebase_target}"; then
+				println "=> git rebase --interactive --autosquash ${rebase_target}"
+				printf "\n"
+
 				# shellcheck disable=SC2086
 				git rebase --interactive --autosquash ${rebase_target} # don't quote since it's sometimes empty
 				printf "\n"
@@ -90,12 +93,18 @@ main() {
 		# check to see if we need to force push
 		elif git branch -v | grep -E "\b${current_branch}\b" | grep -q -E '\[ahead [0-9]+, behind [0-9]+]'; then
 			printf "\n"
+
 			println "## Commits that need to be force pushed:"
 			git log --pretty=format:'%h -%d %s (%cr) <%an>' --abbrev-commit --decorate "${commit_selector}"
 			printf "\n"
 
-			if gum confirm "Do you want to force push?"; then
+			if gum confirm "Do you want to force push?
+	=> git push --force ${current_remote} ${current_branch}"; then
 				printf "\n"
+
+				println "=> git push --force ${current_remote} ${current_branch}"
+				printf "\n"
+
 				git push --force "${current_remote}" "${current_branch}"
 				printf "\n"
 			fi
@@ -118,6 +127,9 @@ main() {
 		hash="${commit%% *}"
 
 		println "# Is this the commit message you want to fixup?"
+		println "=> git show --summary --name-only ${hash}"
+		printf "\n"
+
 		git show --summary --name-only "${hash}"
 		printf "\n"
 
@@ -127,6 +139,9 @@ main() {
 			println "## Canceled fixup commit target creation."
 		fi
 	done
+
+	println "=> git commit --fixup ${hash}"
+	printf "\n"
 
 	git commit --fixup "${hash}"
 	printf "\n"
