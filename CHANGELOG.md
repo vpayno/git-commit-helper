@@ -2,11 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.3.5] - 2024-05-15
+
+### 🐛 Bug Fixes
+
+- *(fixup)* Remove fixup commits from fixup target selection list
+
 ## [1.3.4] - 2024-05-08
 
 ### 🐛 Bug Fixes
 
 - *(fixup)* Show more git command being used
+
+### Release
+
+- 1.3.4 - minor improvements
 
 ## [1.3.3] - 2024-04-13
 
