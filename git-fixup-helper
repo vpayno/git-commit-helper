@@ -115,6 +115,15 @@ main() {
 		has_staged_changes_verbose || return 0
 	fi
 
+	# remove fixup! commits to make the list easier to choose from
+	declare -i index
+	declare re_str=" fixup! "
+	for index in $(seq 0 ${#commits[@]}); do
+		if [[ ${commits[${index}]} =~ ${re_str} ]]; then
+			unset "commits[${index}]"
+		fi
+	done
+
 	while :; do
 		println "# Please choose the commit you would like to fixup:"
 		if commit="$(gum choose "${commits[@]}")"; then
