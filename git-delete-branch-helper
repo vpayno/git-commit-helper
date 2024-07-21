@@ -48,13 +48,13 @@ main() {
 	while :; do
 		mapfile -t all_branches < <(git branch --format '%(refname:lstrip=2)' | sort -uV | grep -v -E "^${default_branch}$")
 
-		exit_if_zero ${#all_branches[@]} "# No branches found, exiting..."
+		exit_if_zero ${#chosen_remotes[@]} "# No branches found, exiting..."
 
 		println "# Choose one or more branches to delete:"
 		mapfile -t chosen_branches < <(gum choose --ordered --no-limit --selected="${csv_branches}" "${all_branches[@]}")
 		printf "\n"
 
-		exit_if_zero ${#all_branches[@]} "# No branches selected, exiting..."
+		exit_if_zero ${#chosen_branches[@]} "# No branches selected, exiting..."
 
 		println "## Selected branches to be deleted:"
 		printf "\t%s\n" "${chosen_branches[@]}"
