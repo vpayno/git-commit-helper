@@ -52,7 +52,7 @@ main() {
 	while :; do
 		mapfile -t all_branches < <(git branch --format '%(refname:lstrip=2)' --merged | sort -uV | grep -v -E "^${default_branch}$")
 
-		exit_if_zero ${#all_branches[@]} "# No branches found, exiting..."
+		exit_if_zero ${#chosen_remotes[@]} "# No branches found, exiting..."
 
 		if ${headless_mode}; then
 			chosen_branches=("${all_branches[@]}")
