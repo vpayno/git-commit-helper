@@ -2,11 +2,23 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.3.6] - 2024-07-22
+
+### 🐛 Bug Fixes
+
+- *(delete-branch)* Use chosen_branches array with exit_if_zero
+- *(clean-up-branches)* Use chosen_branches array with exit_if_zero
+- *(commit)* Use commit_type scalar with exit_if_zero
+
 ## [1.3.5] - 2024-05-15
 
 ### 🐛 Bug Fixes
 
 - *(fixup)* Remove fixup commits from fixup target selection list
+
+### Release
+
+- 1.3.5 - fixup helper usability improvement
 
 ## [1.3.4] - 2024-05-08
 
