@@ -46,6 +46,9 @@ main() {
 		mapfile -t chosen_remotes < <(gum choose --ordered --no-limit --selected="${csv_remotes}" "${all_remotes[@]}")
 		printf "\n"
 	fi
+	println "## Remotes choosen:"
+	printf "\t%s\n" "${chosen_remotes[@]}"
+	printf "\n"
 
 	exit_if_zero ${#chosen_remotes[@]} "# No remotes selected, exiting..."
 
