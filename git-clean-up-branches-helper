@@ -65,6 +65,11 @@ main() {
 				IFS="${save_ifs}"
 			fi
 
+			if [[ ${#all_branches[@]} -eq 0 ]]; then
+				println "# No branches available to delete, exiting..."
+				exit
+			fi
+
 			println "# Choose one or more branches to delete:"
 			mapfile -t chosen_branches < <(gum choose --ordered --no-limit --selected="${csv_branches}" "${all_branches[@]}")
 			printf "\n"
