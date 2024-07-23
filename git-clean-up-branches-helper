@@ -75,6 +75,8 @@ main() {
 
 			println "# Choose one or more branches to delete:"
 			mapfile -t chosen_branches < <(gum choose --ordered --no-limit --selected="${csv_branches}" "${all_branches[@]}")
+			println "## Remotes branches:"
+			printf "\t%s\n" "${chosen_branches[@]}"
 			printf "\n"
 
 			exit_if_zero ${#chosen_branches[@]} "# No branches selected, exiting..."
