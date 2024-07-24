@@ -286,6 +286,37 @@ exit_if_no_staged_changes() {
 	has_staged_changes || exit
 } # exit_if_no_staged_changes()
 
+retry_if_zero() {
+	local -i quantity="${1:-0}"
+	local message="${2:-# No widgets chosen, retry...}"
+
+	if [[ ${quantity} -gt 0 ]]; then
+		# not zero, continue
+		return 1
+	fi
+
+	local answer
+
+	println "# Nothing selected, retry or exit?"
+	answer="$(gum choose "try again" "exit")"
+	printf "\n"
+
+	if [[ ${answer} == "try again" ]]; then
+		println "${message}"
+		# retry
+		return 0
+	fi
+
+	if [[ ${answer} == "exit" ]]; then
+		println "## aborting..."
+		# don't retry
+		return 1
+	fi
+
+	# don't retry if choose aborted
+	return 1
+} # retry_if_zero()
+
 # false if no staged changes, true if changes are staged
 has_staged_changes() {
 	local message
