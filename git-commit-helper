@@ -26,6 +26,10 @@ main() {
 	commit_type="$(gum choose "${commit_types[@]}")"
 	printf "\n"
 
+	println "## Choosen commit type:"
+	printf "\t%s\n" "${commit_type}"
+	printf "\n"
+
 	exit_if_zero ${#commit_type} "# No commit types selected, exiting..."
 
 	println "# Please enter the commit scope (optional):"
