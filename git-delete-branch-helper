@@ -58,6 +58,10 @@ main() {
 		mapfile -t chosen_branches < <(gum choose --ordered --no-limit --selected="${csv_branches}" "${all_branches[@]}")
 		printf "\n"
 
+		if retry_if_zero ${#chosen_branches[@]} "# No branches selected, retrying..."; then
+			continue
+		fi
+
 		exit_if_zero ${#chosen_branches[@]} "# No branches selected, exiting..."
 
 		println "## Selected branches to be deleted:"
