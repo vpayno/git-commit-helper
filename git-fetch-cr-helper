@@ -130,6 +130,11 @@ get_cr_fetch_path() {
 		return
 	fi
 
+	if [[ -z ${cr_number} ]]; then
+		println "## No PR/MR selected, exiting..."
+		exit
+	fi
+
 	println "# ERROR: unknown remote server type, ${remote_url}"
 	exit 1
 } # get_cr_fetch_path()
