@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.4.0] - 2024-07-28
+
+### 🚀 Features
+
+- *(git-helpers-lib)* Add retry_if_zero()
+
+### 🐛 Bug Fixes
+
+- *(clean-up-branches)* Fix infinite loop bug when there are no branches to delete
+- *(clean-up-branches)* Fix show selected remotes after prompt
+- *(clean-up-branches)* Show selected branches
+- *(git-helpers-lib)* Correct default typo in exit_if_zero()
+- *(clean-up-branches)* Add retry option when user doesn't select one or more branches
+- *(commit)* Fix show selected commit type after prompt
+- *(delete-branch)* Show selected remotes after prompt
+- *(delete-branch)* Add retry option when user doesn't select one or more branches
+- *(fixup)* Exit if no PR/MR is selected
+- *(new-branch)* Show selected remote after selection
+
 ## [1.3.6] - 2024-07-22
 
 ### 🐛 Bug Fixes
@@ -9,6 +28,10 @@ All notable changes to this project will be documented in this file.
 - *(delete-branch)* Use chosen_branches array with exit_if_zero
 - *(clean-up-branches)* Use chosen_branches array with exit_if_zero
 - *(commit)* Use commit_type scalar with exit_if_zero
+
+### Release
+
+- 1.3.6 - fix bugs/typos
 
 ## [1.3.5] - 2024-05-15
 
