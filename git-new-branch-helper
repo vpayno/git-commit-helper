@@ -40,6 +40,10 @@ main() {
 	target_remote="$(gum choose --ordered --limit=1 --selected=origin "${all_remotes[@]}")"
 	printf "\n"
 
+	println "## Remotes remote:"
+	printf "\t%s\n" "${target_remote}"
+	printf "\n"
+
 	while :; do
 		println "# Please enter the new branch name (^[A-Za-z0-9_-]+$):"
 		new_branch_name="$(gum input --placeholder "new-branch-name")"
